@@ -1,4 +1,5 @@
-import { Card, Input } from 'antd';
+import { Card, Input, Col, Button, Tooltip } from 'antd';
+import { EditOutlined, DeleteOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
 
 const { TextArea } = Input;
 
@@ -8,45 +9,55 @@ import FormRow from './FormRow';
 
 const { Meta } = Card;
 
-const FutureReplySection = ({ editing }) => {
-  const [pairingList, setPairingList] = useState([
-    { key: 'Comment', value: '' },
-    { key: 'Signature', value: '' },
-    { key: 'Name', value: '' },
-    { key: 'Date', value: '' },
-  ]);
-  const [reply, setReply] = useState('');
-  const [replyOptions, setReplyOptions] = useState([
-    'Acceptance',
-    'Acceptance with Comments',
-    'Rejected',
-  ]);
-  const [tempPairingList, setTempPairingList] = useState([
-    { key: 'Comment', value: '' },
-    { key: 'Signature', value: '' },
-    { key: 'Name', value: '' },
-    { key: 'Date', value: '' },
-  ]);
-  const [tempReply, setTempReply] = useState('');
-  const [tempReplyOptions, setTempReplyOptions] = useState([
-    'Acceptance',
-    'Acceptance with Comments',
-    'Rejected',
-  ]);
+const FutureReplySection = ({ 
+  sortableIndex, 
+  editing, 
+  data, 
+  rootDataSource, 
+  setRootDataSource,
+  editHandler,
+  deleteHandler,
+  cancelHandler, 
+  setFutureReply
+ }) => {
+  const [freeText, setFreeText] = useState(data.freeText)
+  const [reply, setReply] = useState(data.reply)
+  const [replyOptions, setReplyOptions] = useState(data.replyOptions);
+  const [signature, setSignature] = useState(data.signature);
+  const [name, setName] = useState(data.name);
+  const [date, setDate] = useState (data.date);
 
   const builderMode = true;
 
+  const confirmHandler = (index) => {
+    console.log('(newSection)rootDataSource: ',rootDataSource)
+    //console.log(`[{${index}}] - confirmHandler - rootDataSource: ${JSON.stringify(rootDataSource)}`)
+    let newArr = [...rootDataSource];
+    newArr[index].editing = false;
+    newArr[index].data.payload = {
+      "freeText":freeText,
+      "reply": reply,
+      "replyOptions": replyOptions,
+      "signature": signature,
+      "name": name,
+      "date": date
+    }
+    delete newArr[index].originalData;
+    setRootDataSource(newArr);
+    setFutureReply(newArr[index].data.payload)
+  };
+
   const changeTitle = (index, newTitle) => {
-    let tempPairingLists = JSON.parse(JSON.stringify(tempPairingList));
-    tempPairingLists[index].key = newTitle;
-    setTempPairingList(tempPairingLists);
+    let tempPairingLists = JSON.parse(JSON.stringify(freeText));
+    tempPairingLists.key = newTitle;
+    setFreeText(tempPairingLists);
   };
 
   const setPairingData = (title, value) => {
-    let tempPairingLists = JSON.parse(JSON.stringify(tempPairingList));
+    let tempPairingLists = JSON.parse(JSON.stringify(freeText));
     const pairingIndex = tempPairingLists.findIndex((obj) => obj.key === title);
     tempPairingLists[pairingIndex].value = value;
-    setTempPairingList(tempPairingLists);
+    setFreeText(tempPairingLists);
   };
 
   // useEffect(() => {
@@ -58,6 +69,7 @@ const FutureReplySection = ({ editing }) => {
 
   return (
     <>
+    <Col flex="auto" style={{ maxWidth: '80%' }}>
       <Card
         title={
           <Meta
@@ -72,13 +84,51 @@ const FutureReplySection = ({ editing }) => {
           mandatory
           formEditing={editing}
           title="Reply"
-          options={tempReplyOptions}
-          setOptions={setTempReplyOptions}
+          options={replyOptions}
+          setOptions={setReplyOptions}
+          maxOptions={6}
           optionsEditable
-          choice={tempReply}
-          setChoice={setTempReply}
+          choice={reply}
+          setChoice={setReply}
         />
-        {tempPairingList.map((rows, i) => {
+
+        <FormRow
+          builderMode
+          formEditing={editing}
+          title={freeText.key}
+          titleEditable
+          textField
+          setTitle={changeTitle}
+          data={freeText.value}
+          setFieldData={setPairingData}
+        />
+
+        <FormRow
+          builderMode
+          mandatory
+          formEditing={editing}
+          title={'Signature'}
+          data={signature}
+        />
+
+        <FormRow
+          builderMode
+          mandatory
+          formEditing={editing}
+          title={'Name'}
+          data={name}
+        />
+
+        <FormRow
+          builderMode
+          mandatory
+          formEditing={editing}
+          title={'Date'}
+          data={date}
+        />
+
+
+        {/*tempPairingList.map((rows, i) => {
           return (
             <FormRow
               key={i}
@@ -95,8 +145,26 @@ const FutureReplySection = ({ editing }) => {
               prefillable
             />
           );
-        })}
+        })*/}
       </Card>
+    </Col>
+    <Col flex="32px" style={{ verticalAlign: 'middle', margin: 'auto' }}>
+        {editing ? (
+          <>
+            <Tooltip title="Save Change(s)">
+              <Button type="primary" style={{ margin: '4px' }} icon={<CheckOutlined />} onClick={() => confirmHandler(sortableIndex)} size="small" />
+            </Tooltip>
+            <Tooltip placement="bottom" title="Cancel Change(s)">
+              <Button style={{ margin: '4px' }} icon={<CloseOutlined />} onClick={() => cancelHandler(sortableIndex)} size="small" />
+            </Tooltip>
+          </>
+        ) : (
+          <>
+            <Button style={{ margin: '4px' }} icon={<EditOutlined/>} onClick={() => editHandler(sortableIndex)} size="small" />
+            <Button style={{ margin: '4px' }} icon={<DeleteOutlined />} onClick={() => deleteHandler(sortableIndex)} size="small" />
+          </>
+        )}
+    </Col>
     </>
   );
 };

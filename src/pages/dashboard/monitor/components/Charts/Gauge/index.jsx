@@ -5,16 +5,16 @@ const { Arc, Html, Line } = Guide;
 const defaultFormatter = (val) => {
   switch (val) {
     case '2':
-      return 'bad';
+      return '差';
 
     case '4':
-      return 'medium';
+      return '中';
 
     case '6':
-      return 'good';
+      return '良';
 
     case '8':
-      return 'great';
+      return '优';
 
     default:
       return '';

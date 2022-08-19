@@ -32,7 +32,7 @@ class WaterWave extends Component {
     const { percent } = this.props;
 
     if (props.percent !== percent) {
-      // render will become slow without this
+      // 不加这个会造成绘制缓慢
       this.renderChart('update');
     }
   }

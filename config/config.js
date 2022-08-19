@@ -33,6 +33,24 @@ export default defineConfig({
   // umi routes: https://umijs.org/docs/routing
   routes: [
     {
+      path: '/submission',
+      name: 'Submissions',
+      routes: [
+        {
+          path: '/submission/list',
+          component: './submission/Index',
+          name: 'Submissions List',
+          layout: true,
+        },
+        {
+          path: '/submission/details',
+          component: './submission/Details',
+          name: 'Submission Details',
+          layout: true,
+        },
+      ],
+    },
+    {
       path: '/',
       redirect: '/library/directory',
     },
@@ -97,6 +115,13 @@ export default defineConfig({
     //   ],
     // },
     {
+
+      /***********************
+       * 
+       * the module that we created
+       * 
+       * ******************* */
+
       path: '/Projects',
       icon: 'FolderOutlined',
       name: 'projectPage',
@@ -108,6 +133,11 @@ export default defineConfig({
       ],
     },
     {
+      /***********************
+       * 
+       * the module that we created
+       * 
+       * ******************* */
       path: '/library',
       icon: 'ReadOutlined',
       name: 'Library',
@@ -129,9 +159,21 @@ export default defineConfig({
           path: '/library/editor',
           component: './library/editor',
         },
+        {
+          hideInMenu: true,
+          name: 'setCreator',
+          icon: 'smile',
+          path: '/library/setCreator',
+          component: './library/setCreator',
+        },
       ],
     },
     {
+      /***********************
+       * 
+       * the module that we created
+       * 
+       * ******************* */
       path: '/CompanyProfile',
       icon: 'HddOutlined',
       name: 'Company Profile',
@@ -167,7 +209,7 @@ export default defineConfig({
     {
       hideInMenu: true,
       hideChildrenInMenu: true,
-      path: '/form',
+      path: '/form',    //form template, just for reference
       icon: 'form',
       name: 'form',
       routes: [
@@ -198,7 +240,7 @@ export default defineConfig({
     {
       hideInMenu: true,
       hideChildrenInMenu: true,
-      path: '/list',
+      path: '/list',  //list template, just for reference
       icon: 'table',
       name: 'list',
       routes: [
@@ -258,7 +300,7 @@ export default defineConfig({
     {
       hideInMenu: true,
       hideChildrenInMenu: true,
-      path: '/profile',
+      path: '/profile',   //detail page template, just for reference, content not translated
       name: 'profile',
       icon: 'profile',
       routes: [
@@ -283,7 +325,7 @@ export default defineConfig({
     {
       hideInMenu: true,
       hideChildrenInMenu: true,
-      name: 'result',
+      name: 'result',   //result page template, just for reference, content not translated
       icon: 'CheckCircleOutlined',
       path: '/result',
       routes: [
@@ -308,7 +350,7 @@ export default defineConfig({
     {
       hideInMenu: true,
       hideChildrenInMenu: true,
-      name: 'exception',
+      name: 'exception',    //exception template, just for reference
       icon: 'warning',
       path: '/exception',
       routes: [
@@ -339,32 +381,35 @@ export default defineConfig({
     {
       hideInMenu: true,
       hideChildrenInMenu: true,
-      name: 'account',
+      name: 'account',    //personal profile template, just for reference
       icon: 'user',
       path: '/account',
       routes: [
         {
           path: '/account',
-          redirect: '/account/center',
+          //redirect: '/account/center',
+          redirect: '/',
         },
         {
           name: 'center',
           icon: 'smile',
           path: '/account/center',
           component: './account/center',
+          redirect: '/',
         },
         {
           name: 'settings',
           icon: 'smile',
           path: '/account/settings',
           component: './account/settings',
+          redirect: '/',
         },
       ],
     },
     {
       hideInMenu: true,
       hideChildrenInMenu: true,
-      name: 'editor',
+      name: 'editor',   // flowcharts & diagrams editortemplate, just for reference, content not translated
       icon: 'highlight',
       path: '/editor',
       routes: [
@@ -401,6 +446,8 @@ export default defineConfig({
   theme: {
     // 如果不想要 configProvide 动态设置主题需要把这个设置为 default
     // 只有设置为 variable， 才能使用 configProvide 动态设置主色调
+    // (translate) set root-entry-name as 'default' if configProvide theme is not needed
+    //configProvide theme can be used only when root-entry-name set as 'variable'
     // https://ant.design/docs/react/customize-theme-variable-cn
     'root-entry-name': 'variable',
   },
@@ -418,7 +465,7 @@ export default defineConfig({
   openAPI: [
     {
       requestLibPath: "import { request } from 'umi'",
-      // 或者使用在线的版本
+      // online version
       // schemaPath: "https://gw.alipayobjects.com/os/antfincdn/M%24jrzTTYJN/oneapi.json"
       schemaPath: join(__dirname, 'oneapi.json'),
       mock: false,

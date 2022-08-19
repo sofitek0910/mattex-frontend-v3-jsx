@@ -232,3 +232,11 @@
   border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
   border-right: 1px solid rgba(0, 0, 0, 0.06) !important;
 }
+
+.sectionCard {
+  border-color: gray;
+}
+
+.sectionCard:focus-within {
+  border-color: #0256b4;
+}

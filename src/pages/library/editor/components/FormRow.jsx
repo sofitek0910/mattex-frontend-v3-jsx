@@ -126,7 +126,7 @@ function FormRow({
         }
 
         {
-          //* that indicate mandatory
+          //the '*' that indicate mandatory
           !builderMode && mandatory ? (
             <div
               style={{

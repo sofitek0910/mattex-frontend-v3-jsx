@@ -41,7 +41,14 @@ export const INITIAL_DATA = [
     id: uuidv4(),
     type: 'SectionSalutation',
     editing: false,
-    data: {}
+    data: {
+      payload: {
+        'to': '',
+        'attn': '',
+        'attnVisible': true
+      },
+      prev: {}
+    }
   },
   {
     id: uuidv4(),
@@ -116,8 +123,8 @@ export const INITIAL_DATA = [
 //       }]
 //   },
 //   {
-//       type: 'DescriptionOftitle',
-//       title: 'DescriptionOftitle',
+//       type: 'DescriptionOfContent',
+//       title: 'DescriptionOfContent',
 //       disabled: false,
 //       mandatory: true,
 //   },

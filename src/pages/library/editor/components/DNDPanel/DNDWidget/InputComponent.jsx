@@ -1,8 +1,10 @@
 import { CloseCircleOutlined, EditOutlined } from '@ant-design/icons';
 import { Button, Col, Input, Row } from 'antd';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
-const ImageComponent = ({
+import TitleEditPopup from './TitleEditPopup';
+
+const InputComponent = ({
   editing,
   label,
   placeholder,
@@ -11,11 +13,33 @@ const ImageComponent = ({
   canRemove,
   index,
   changeHandler,
-  deleteHandler
+  removeHandler,
+  labelEditHandler,
+  listingStyle
 }) => {
   const [_prefilledValue, setPrefilledValue] = useState(prefilledValue);
+  const [titleEditPopupShow, setTitleEditPopupShow] = useState(false);
+
+
+  const titleEditClickHandler = () => {
+    //trigger titleEditPopupShow to show popup
+    setTitleEditPopupShow(true);
+  };
+
+  const titleEditCallback = useCallback((index, newTitle) => {
+    labelEditHandler(index, newTitle)
+  });
+
+  const convertToAscii = (index, uppercase = false) => {
+    if (uppercase) {
+      return String.fromCharCode('A'.charCodeAt(0) + index);
+    } else {
+      return String.fromCharCode('a'.charCodeAt(0) + index);
+    }
+  }
 
   return (
+    <>
     <Row
       style={{
         backgroundColor: '#EAF4FF',
@@ -26,18 +50,34 @@ const ImageComponent = ({
       }}
     >
       <Col flex={editing && canEditLabel ? '230px' : '250px'}>
-        {/* { (editing)?(
-          <Input value={label} />
-        ):(
-          <div style={{padding: '4px 11px'}}>{label}</div>
-        ) } */}
-        <div style={{ padding: '4px 11px' }}>{label}</div>
+        <div style={{ padding: '4px 11px' }}>
+          {/* { (editing)?(
+            <Input value={label} />
+          ):(
+            <div style={{padding: '4px 11px'}}>{label}</div>
+          ) } */}
+          {
+            listingStyle == 'alphabet'? (
+              <span style={{ padding: '0 0 4px 0' }}>{`(${convertToAscii(index)})`}</span>
+            ):(<></>)
+          }
+          {
+            listingStyle == 'number'? (
+              <span style={{ padding: '0 0 4px 0' }}>{`(${index+1})`}</span>
+            ):(<></>)
+          }
+          <span style={{ padding: '4px 4px' }}>{label}</span>
+        </div>
+        
       </Col>
 
       {editing && canEditLabel ? (
         <Col flex="20px" style={{ padding: '0px' }}>
           <Button type="text" style={{ padding: '0px' }}>
-            <EditOutlined style={{ color: '#0256B4' }} />
+            <EditOutlined
+             style={{ color: '#0256B4' }} 
+             onClick={editing ? titleEditClickHandler : () => {}}
+            />
           </Button>
         </Col>
       ) : (
@@ -64,7 +104,7 @@ const ImageComponent = ({
       </Col>
       {editing && canRemove ? (
         <Col flex="20px" style={{ padding: '0px 4px' }}>
-          <Button type="text" style={{ padding: '0px' }} onClick={() => {deleteHandler(index)}}>
+          <Button type="text" style={{ padding: '0px' }} onClick={() => {removeHandler(index)}}>
             <CloseCircleOutlined style={{ color: '#0256B4' }} />
           </Button>
         </Col>
@@ -72,7 +112,17 @@ const ImageComponent = ({
         <></>
       )}
     </Row>
+
+    {/******modal for editing title******* */}
+    <TitleEditPopup
+      titleEditPopupShow={titleEditPopupShow}
+      setTitleEditPopupShow={setTitleEditPopupShow}
+      title={label}
+      setTitle={titleEditCallback}
+      index={index}
+    />
+    </>
   );
 };
 
-export default ImageComponent;
+export default InputComponent;

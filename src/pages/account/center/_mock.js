@@ -25,61 +25,25 @@ const covers = [
   'https://gw.alipayobjects.com/zos/rmsportal/iXjVmWVHbCJAyqvDxdtx.png',
   'https://gw.alipayobjects.com/zos/rmsportal/gLaIAoVWTtLbBWZNYEMg.png',
 ];
-const desc = [
-  //dummy data
-  '那是一种内在的东西， 他们到达不了，也无法触及的',
-  '希望是一个好东西，也许是最好的，好东西是不会消亡的',
-  '生命就像一盒巧克力，结果往往出人意料',
-  '城镇中有那么多的酒馆，她却偏偏走进了我的酒馆',
-  '那时候我只会想自己想要什么，从不想自己拥有什么',
-];
-const user = [
-  //dummy data
-  '付小小',
-  '曲丽丽',
-  '林东东',
-  '周星星',
-  '吴加好',
-  '朱偏右',
-  '鱼酱',
-  '乐哥',
-  '谭小仪',
-  '仲尼',
-]; // 当前用户信息
+
 
 const currentUseDetail = {
   //dummy data
-  name: 'Serati Ma',
+  name: 'user name',
   avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
   userid: '00000001',
-  email: 'antdesign@alipay.com',
-  signature: '海纳百川，有容乃大',
-  title: '交互专家',
-  group: '蚂蚁金服－某某某事业群－某某平台部－某某技术部－UED',
+  email: 'user@example.com',
+  signature: 'signature',
+  title: 'job title',
+  group: 'team',
   tags: [
     {
       key: '0',
-      label: '很有想法的',
+      label: 'personal tag 1',
     },
     {
       key: '1',
-      label: '专注设计',
-    },
-    {
-      key: '2',
-      label: '辣~',
-    },
-    {
-      key: '3',
-      label: '大长腿',
-    },
-    {
-      key: '4',
-      label: '川妹子',
-    },
-    {
-      key: '5',
-      label: '海纳百川',
+      label: 'personal tag 2',
     },
   ],
   notice: [
@@ -88,9 +52,9 @@ const currentUseDetail = {
       id: 'xxx1',
       title: titles[0],
       logo: avatars[0],
-      description: '那是一种内在的东西，他们到达不了，也无法触及的',
+      description: 'group description',
       updatedAt: new Date(),
-      member: '科学搬砖组',
+      member: 'group name 1',
       href: '',
       memberLink: '',
     },
@@ -98,49 +62,9 @@ const currentUseDetail = {
       id: 'xxx2',
       title: titles[1],
       logo: avatars[1],
-      description: '希望是一个好东西，也许是最好的，好东西是不会消亡的',
+      description: 'group description',
       updatedAt: new Date('2017-07-24'),
-      member: '全组都是吴彦祖',
-      href: '',
-      memberLink: '',
-    },
-    {
-      id: 'xxx3',
-      title: titles[2],
-      logo: avatars[2],
-      description: '城镇中有那么多的酒馆，她却偏偏走进了我的酒馆',
-      updatedAt: new Date(),
-      member: '中二少女团',
-      href: '',
-      memberLink: '',
-    },
-    {
-      id: 'xxx4',
-      title: titles[3],
-      logo: avatars[3],
-      description: '那时候我只会想自己想要什么，从不想自己拥有什么',
-      updatedAt: new Date('2017-07-23'),
-      member: '程序员日常',
-      href: '',
-      memberLink: '',
-    },
-    {
-      id: 'xxx5',
-      title: titles[4],
-      logo: avatars[4],
-      description: '凛冬将至',
-      updatedAt: new Date('2017-07-23'),
-      member: '高逼格设计天团',
-      href: '',
-      memberLink: '',
-    },
-    {
-      id: 'xxx6',
-      title: titles[5],
-      logo: avatars[5],
-      description: '生命就像一盒巧克力，结果往往出人意料',
-      updatedAt: new Date('2017-07-23'),
-      member: '骗你来学计算机',
+      member: 'group  name 2',
       href: '',
       memberLink: '',
     },
@@ -169,7 +93,7 @@ function fakeList(count) {
     list.push({
       //dummy data
       id: `fake-list-${i}`,
-      owner: user[i % 10],
+      owner: 'username',
       title: titles[i % 8],
       avatar: avatars[i % 8],
       cover: parseInt(`${i / 4}`, 10) % 2 === 0 ? covers[i % 4] : covers[3 - (i % 4)],
@@ -179,32 +103,22 @@ function fakeList(count) {
       href: 'https://ant.design',
       updatedAt: new Date(new Date().getTime() - 1000 * 60 * 60 * 2 * i).getTime(),
       createdAt: new Date(new Date().getTime() - 1000 * 60 * 60 * 2 * i).getTime(),
-      subDescription: desc[i % 5],
+      subDescription: 'subDescription',
       description:
-        '在中台产品的研发过程中，会出现不同的设计规范和实现方式，但其中往往存在很多类似的页面和组件，这些类似的组件会被抽离成一套标准规范。',
+        'description',
       activeUser: Math.ceil(Math.random() * 100000) + 100000,
       newUser: Math.ceil(Math.random() * 1000) + 1000,
       star: Math.ceil(Math.random() * 100) + 100,
       like: Math.ceil(Math.random() * 100) + 100,
       message: Math.ceil(Math.random() * 10) + 10,
       content:
-        '段落示意：蚂蚁金服设计平台 ant.design，用最小的工作量，无缝接入蚂蚁金服生态，提供跨越设计与开发的体验解决方案。蚂蚁金服设计平台 ant.design，用最小的工作量，无缝接入蚂蚁金服生态，提供跨越设计与开发的体验解决方案。',
+        'content',
       members: [
         {
           avatar: 'https://gw.alipayobjects.com/zos/rmsportal/ZiESqWwCXBRQoaPONSJe.png',
-          name: '曲丽丽',
+          name: 'user',
           id: 'member1',
-        },
-        {
-          avatar: 'https://gw.alipayobjects.com/zos/rmsportal/tBOxZPlITHqwlGjsJWaF.png',
-          name: '王昭君',
-          id: 'member2',
-        },
-        {
-          avatar: 'https://gw.alipayobjects.com/zos/rmsportal/sBxjgqiuHMGRkIjqlQCd.png',
-          name: '董娜娜',
-          id: 'member3',
-        },
+        }
       ],
     });
   }

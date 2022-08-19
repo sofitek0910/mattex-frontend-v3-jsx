@@ -10,6 +10,7 @@ function FormRadio({
   options,
   optionsEditable,
   setOptions,
+  maxOptions,
   choice,
   setChoice,
   prechoosable,
@@ -135,10 +136,10 @@ function FormRadio({
         optionsEditable ? (
           <div style={{ width: '4%', padding: '3px 6px' }}>
             <PlusCircleOutlined
-              onClick={formEditing ? addOptionHandler : () => {}}
+              onClick={(formEditing && maxOptions > options.length) ? addOptionHandler : () => { }}
               style={{
-                cursor: formEditing ? 'pointer' : 'not-allowed',
-                color: formEditing ? '#0256B4' : '#BBBBBD',
+                cursor: (formEditing && maxOptions > options.length) ? 'pointer' : 'not-allowed',
+                color: (formEditing && maxOptions > options.length) ? '#0256B4' : '#BBBBBD',
               }}
             />
           </div>
@@ -156,6 +157,7 @@ FormRadio.defaultProps = {
   optionsEditable: false,
   options: ['Yes', 'No'],
   setOptions: null,
+  maxOptions: 2,
   prechoosable: false,
   //choice:null
 };

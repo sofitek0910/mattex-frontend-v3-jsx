@@ -99,7 +99,7 @@ class TagCloud extends Component {
         imageMask: this.imageMask,
         font: 'Verdana',
         size: [w, h],
-        // width and height should be adjusted according to imageMask
+        // 宽高设置最好根据 imageMask 做调整
         padding: 0,
         timeInterval: 5000,
 

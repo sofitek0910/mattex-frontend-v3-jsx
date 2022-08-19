@@ -62,8 +62,8 @@ const Analysis = () => {
 
   const menu = (
     <Menu>
-      <Menu.Item>action 1</Menu.Item>
-      <Menu.Item>action 2</Menu.Item>
+      <Menu.Item>操作一</Menu.Item>
+      <Menu.Item>操作二</Menu.Item>
     </Menu>
   );
   const dropdownGroup = (
