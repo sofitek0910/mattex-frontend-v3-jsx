@@ -94,7 +94,7 @@ const Login = () => {
             <FormattedMessage
               key="loginWith"
               id="pages.login.loginWith"
-              defaultMessage="other login meth9od"
+              defaultMessage="other login method"
             />,
             <AlipayCircleOutlined key="AlipayCircleOutlined" className={styles.icon} />,
             <TaobaoCircleOutlined key="TaobaoCircleOutlined" className={styles.icon} />,
@@ -102,6 +102,12 @@ const Login = () => {
           ]}
           onFinish={async (values) => {
             await handleSubmit(values);
+          }}
+          submitter={{
+            searchConfig: {
+              //resetText: 'reset',
+              submitText: 'Login',
+            },
           }}
         >
           <Tabs activeKey={type} onChange={setType}>

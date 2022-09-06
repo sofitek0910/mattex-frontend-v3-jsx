@@ -33,27 +33,23 @@ const Monitor = () => {
               marginBottom: 24,
             }}
           >
-            <Card title="realtime activity dashboard" bordered={false}>
+            <Card title="活动实时交易情况" bordered={false}>
               <Row>
                 <Col md={6} sm={12} xs={24}>
                   <Statistic
-                    title="today's total turnover"
-                    suffix="dollar"
+                    title="今日交易总额"
+                    suffix="元"
                     value={numeral(124543233).format('0,0')}
                   />
                 </Col>
                 <Col md={6} sm={12} xs={24}>
-                  <Statistic title="salse target completion percentage" value="92%" />
+                  <Statistic title="销售目标完成率" value="92%" />
                 </Col>
                 <Col md={6} sm={12} xs={24}>
-                  <Countdown title="event remaining tiem" value={deadline} format="HH:mm:ss:SSS" />
+                  <Countdown title="活动剩余时间" value={deadline} format="HH:mm:ss:SSS" />
                 </Col>
                 <Col md={6} sm={12} xs={24}>
-                  <Statistic
-                    title="turnover per second"
-                    suffix="dollar"
-                    value={numeral(234).format('0,0')}
-                  />
+                  <Statistic title="每秒交易总额" suffix="元" value={numeral(234).format('0,0')} />
                 </Col>
               </Row>
               <div className={styles.mapChart}>
@@ -63,7 +59,7 @@ const Monitor = () => {
           </Col>
           <Col xl={6} lg={24} md={24} sm={24} xs={24}>
             <Card
-              title="activity prediction"
+              title="活动情况预测"
               style={{
                 marginBottom: 24,
               }}
@@ -107,7 +103,7 @@ const Monitor = () => {
               marginBottom: 24,
             }}
           >
-            <Card title="category proportion" bordered={false} className={styles.pieCard}>
+            <Card title="各品类占比" bordered={false} className={styles.pieCard}>
               <Row
                 style={{
                   padding: '16px 0',
@@ -143,7 +139,7 @@ const Monitor = () => {
             }}
           >
             <Card
-              title="trending keywords"
+              title="热门搜索"
               loading={loading}
               bordered={false}
               bodyStyle={{
@@ -172,7 +168,7 @@ const Monitor = () => {
             }}
           >
             <Card
-              title="remaining capital"
+              title="资源剩余"
               bodyStyle={{
                 textAlign: 'center',
                 fontSize: 0,

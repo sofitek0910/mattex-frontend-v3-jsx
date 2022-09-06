@@ -15,7 +15,7 @@ const ProportionSales = ({
     loading={loading}
     className={styles.salesCard}
     bordered={false}
-    title="sales type proportion"
+    title="销售额类别占比"
     style={{
       height: '100%',
     }}
@@ -24,16 +24,16 @@ const ProportionSales = ({
         {dropdownGroup}
         <div className={styles.salesTypeRadio}>
           <Radio.Group value={salesType} onChange={handleChangeSalesType}>
-            <Radio.Button value="all">all</Radio.Button>
-            <Radio.Button value="online">online store</Radio.Button>
-            <Radio.Button value="stores">physical stores</Radio.Button>
+            <Radio.Button value="all">全部渠道</Radio.Button>
+            <Radio.Button value="online">线上</Radio.Button>
+            <Radio.Button value="stores">门店</Radio.Button>
           </Radio.Group>
         </div>
       </div>
     }
   >
     <div>
-      <Text>sales</Text>
+      <Text>销售额</Text>
       <Donut
         forceFit
         height={340}
@@ -53,7 +53,7 @@ const ProportionSales = ({
           },
         }}
         statistic={{
-          totalLabel: 'sales',
+          totalLabel: '销售额',
         }}
       />
     </div>

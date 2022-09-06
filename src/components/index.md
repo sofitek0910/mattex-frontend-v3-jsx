@@ -38,15 +38,15 @@ import HeaderDropdown from '@/components/HeaderDropdown';
 export default () => {
   const menuHeaderDropdown = (
     <Menu selectedKeys={[]}>
-      <Menu.Item key="center">profile</Menu.Item>
-      <Menu.Item key="settings">setting</Menu.Item>
+      <Menu.Item key="center">个人中心</Menu.Item>
+      <Menu.Item key="settings">个人设置</Menu.Item>
       <Menu.Divider />
-      <Menu.Item key="logout">logout</Menu.Item>
+      <Menu.Item key="logout">退出登录</Menu.Item>
     </Menu>
   );
   return (
     <HeaderDropdown overlay={menuHeaderDropdown}>
-      <Button>hover to show menu</Button>
+      <Button>hover 展示菜单</Button>
     </HeaderDropdown>
   );
 };
@@ -67,7 +67,7 @@ import HeaderSearch from '@/components/HeaderSearch';
 export default () => {
   return (
     <HeaderSearch
-      placeholder="in-site searching"
+      placeholder="站内搜索"
       defaultValue="umi ui"
       options={[
         { label: 'Ant Design Pro', value: 'Ant Design Pro' },
@@ -137,35 +137,35 @@ export default () => {
     <NoticeIcon
       count={10}
       onItemClick={(item) => {
-        message.info(`${item.title} is clicked`);
+        message.info(`${item.title} 被点击了`);
       }}
-      onClear={(title: string, key: string) => message.info('clear more is clicked')}
+      onClear={(title: string, key: string) => message.info('点击了清空更多')}
       loading={false}
-      clearText="clear"
-      viewMoreText="view more"
-      onViewMore={() => message.info('view more is clicked')}
+      clearText="清空"
+      viewMoreText="查看更多"
+      onViewMore={() => message.info('点击了查看更多')}
       clearClose
     >
       <NoticeIcon.Tab
         tabKey="notification"
         count={2}
         list={list}
-        title="notification"
-        emptyText="no new notification"
+        title="通知"
+        emptyText="你已查看所有通知"
         showViewMore
       />
       <NoticeIcon.Tab
         tabKey="message"
         count={2}
         list={list}
-        title="message"
-        emptyText="no new message"
+        title="消息"
+        emptyText="您已读完所有消息"
         showViewMore
       />
       <NoticeIcon.Tab
         tabKey="event"
-        title="event"
-        emptyText="no coming up event"
+        title="待办"
+        emptyText="你已完成所有待办"
         count={2}
         list={list}
         showViewMore

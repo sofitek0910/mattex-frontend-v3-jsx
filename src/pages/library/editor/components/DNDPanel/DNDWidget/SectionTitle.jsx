@@ -1,15 +1,40 @@
-import { Button, Card, Col, Input, Row, Select } from 'antd';
+import { Button, Card, Col, Input, Row, Select, Tooltip } from 'antd';
 
-import { PlusCircleOutlined, ReloadOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, CloseOutlined, CheckOutlined, PlusCircleOutlined, ReloadOutlined } from '@ant-design/icons';
 const { TextArea } = Input;
 
 import { useState } from 'react';
 import FormRow from './FormRow';
 
-const TitleSection = ({ editing }) => {
-  const [title, setTitle] = useState('');
-  const [projectLevelId, setProjectLevelId] = useState('');
-  const [remark, setRemark] = useState([{ key: 'Free Text Title', value: '' }]);
+const TitleSection = ({ 
+  sortableIndex, 
+  editing, 
+  data, 
+  rootDataSource, 
+  setRootDataSource,
+  editHandler,
+  deleteHandler,
+  cancelHandler, 
+  setTitleSection
+}) => {
+  const [title, setTitle] = useState(data.title);
+  const [projectLevelId, setProjectLevelId] = useState(data.projectLevelId);
+  const [remark, setRemark] = useState(data.remark);
+
+  const confirmHandler = (index) => {
+    console.log('(newSection)rootDataSource: ',rootDataSource)
+    //console.log(`[{${index}}] - confirmHandler - rootDataSource: ${JSON.stringify(rootDataSource)}`)
+    let newArr = [...rootDataSource];
+    newArr[index].editing = false;
+    newArr[index].data.payload = {
+      'title': title,
+      'projectLevelId': projectLevelId,
+      'remark': remark
+    }
+    delete newArr[index].originalData;
+    setRootDataSource(newArr);
+    setTitleSection(newArr[index].data.payload)
+  };
 
   const setPairingData = (title, value) => {
     let tempPairingList = JSON.parse(JSON.stringify(remark));
@@ -60,6 +85,8 @@ const TitleSection = ({ editing }) => {
         index={index}
         prefillable
         textField
+        builderMode={false}
+        mandatory
       />
     );
   };
@@ -68,6 +95,7 @@ const TitleSection = ({ editing }) => {
 
   return (
     <>
+    <Col flex="auto" style={{ maxWidth: '80%' }}>
       <Card title="Title" style={{ margin: '8px' }}>
         <FormRow
           title="Title"
@@ -226,6 +254,24 @@ const TitleSection = ({ editing }) => {
           </Button>
         </div>
       </Card>
+    </Col>
+    <Col flex="32px" style={{ verticalAlign: 'middle', margin: 'auto' }}>
+        {editing ? (
+          <>
+            <Tooltip title="Save Change(s)">
+              <Button type="primary" style={{ margin: '4px' }} icon={<CheckOutlined />} onClick={() => confirmHandler(sortableIndex)} size="small" />
+            </Tooltip>
+            <Tooltip placement="bottom" title="Cancel Change(s)">
+              <Button style={{ margin: '4px' }} icon={<CloseOutlined />} onClick={() => cancelHandler(sortableIndex)} size="small" />
+            </Tooltip>
+          </>
+        ) : (
+          <>
+            <Button style={{ margin: '4px' }} icon={<EditOutlined/>} onClick={() => editHandler(sortableIndex)} size="small" />
+            <Button style={{ margin: '4px' }} icon={<DeleteOutlined />} onClick={() => deleteHandler(sortableIndex)} size="small" />
+          </>
+        )}
+    </Col>
     </>
   );
 };

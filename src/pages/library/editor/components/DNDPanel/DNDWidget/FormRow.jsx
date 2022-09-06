@@ -1,9 +1,10 @@
 import { useState } from 'react';
 
-import { CloseOutlined, EditOutlined, EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
+import Icon, { CloseOutlined, EditOutlined, EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
 import { Button, Input } from 'antd';
 
 import TitleEditPopup from './TitleEditPopup';
+import { ReactComponent as AsteriskSvg } from './asterisk.svg';
 
 const { TextArea } = Input;
 
@@ -47,13 +48,13 @@ function FormRow({
     //   if(listingStyle!=='none') {
     //       titleWidth -= 4
     //   }
-    //   if (!builderMode && mandatory) {
-    //       titleWidth -= 4
-    //   }
-    //   //if (titleEditable && setTitle!=null){
-    //       if (titleEditable) {
-    //       titleWidth -= 4
-    //   }
+    if (!builderMode && mandatory) {
+      titleWidth -= 4
+    }
+    //if (titleEditable && setTitle!=null){
+    if (titleEditable) {
+      titleWidth -= 3
+    }
     return `${titleWidth}%`;
   };
 
@@ -64,7 +65,7 @@ function FormRow({
       inputWidth -= 5;
     }
     //if (removable && removeRow!=null){
-    if (removable) {
+    if (removable && formEditing) {
       inputWidth -= 3;
     }
     return `${inputWidth}%`;
@@ -130,12 +131,14 @@ function FormRow({
           !builderMode && mandatory ? (
             <div
               style={{
-                width: '4.2%',
-                backgroundColor: '#EAF4FF',
+                width: '4.1%',
                 padding: '5px 0',
+                backgroundColor: '#eaf4ff',
+                fontWeight: '500',
+                color: '#0256b4'
               }}
             >
-              *
+              <Icon component={AsteriskSvg} style={{fontSize: '8px'}}/>
             </div>
           ) : (
             ''
@@ -146,7 +149,11 @@ function FormRow({
           //text field
           <TextArea
             placeholder={builderMode ? (prefillable ? 'Prefill text here...' : '---') : ''}
-            style={{ borderRadius: '0 3px 3px 0' }}
+            style={{ 
+              width: getInputWidth(),
+              borderRadius: '0 3px 3px 0',
+              border: '2px solid #EAF4FF',
+             }}
             autoSize={{ minRows: 3 }}
             disabled={!formEditing || (builderMode && !prefillable)}
             value={data}

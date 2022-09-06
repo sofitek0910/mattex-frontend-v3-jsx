@@ -1,4 +1,4 @@
-import { CheckOutlined, CloseOutlined, EditOutlined } from '@ant-design/icons';
+import { CheckOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Input, Radio } from 'antd';
 import { useEffect, useState } from 'react';
 
@@ -21,6 +21,9 @@ function FormRadioOption({
   }, [formEditing]);
 
   const [newOption, setNewOption] = useState(option);
+  useEffect(() => {
+      setNewOption(option)
+  }, [option])
   /*const [newFlag, setNewFlag] = useState<boolean>(true)
     useEffect(() => {
         if(option != 'New Option'){
@@ -73,7 +76,7 @@ function FormRadioOption({
           />
 
           {/******remove icon**** */}
-          <CloseOutlined
+          <DeleteOutlined
             onClick={formEditing ? crossHandler : () => {}}
             style={controllIconStyle}
           />
