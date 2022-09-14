@@ -4,7 +4,7 @@ import emptyImage from './emptyBuilderBlock.svg';
 function EmptyContainer() {
   return (
     <Empty
-      //className="emptyBuilderMsg"
+      className="emptyBuilderMsg"
       style={{ padding: '30vh 0 0 0' }}
       image={emptyImage}
       imageStyle={{height: '7vh'}}

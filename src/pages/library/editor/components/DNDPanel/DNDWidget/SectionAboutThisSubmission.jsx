@@ -53,7 +53,7 @@ const AboutThisSubmissionSection = ({
   return (
     <>
     <Col flex="auto" style={{ maxWidth: '80%' }}>
-      <Card title="About This Submission" style={{ margin: '8px' }}>
+      <Card className='sectionCard' title="About This Submission" style={{ margin: '8px' }}>
         <FormRow
           title="Remarks"
           data={remarks}

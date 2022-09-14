@@ -1,3 +1,8 @@
+body,
+html {
+  font-family: Roboto;
+}
+
 .DNDPanel{
 /*   
   display: flex;
@@ -233,10 +238,144 @@
   border-right: 1px solid rgba(0, 0, 0, 0.06) !important;
 }
 
-.sectionCard {
-  border-color: gray;
-}
+
 
 .sectionCard:focus-within {
   border-color: #0256b4;
+}
+
+
+
+
+/*from old version*/
+.headerSectionImg {
+  max-width: 100%;
+  padding: 25% 0;
+}
+.addFieldButton,
+.addFieldButton:focus {
+  border: none;
+  color: #0256b4;
+  background-color: #eaf4ff;
+  border-radius: 36px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+.addFieldButton:hover {
+  border: none;
+  color: #ffffff;
+  background-color: #0256b4;
+  border-radius: 36px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+.disabledAddButton {
+  border-radius: 36px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+/* .primaryButton,
+.primaryButton:focus {
+  border: none;
+  color: #ffffff;
+  background-color: #0256b4;
+  margin: 8px !important;
+}
+.primaryButton:hover {
+  background-color: #0256b4;
+  margin: 8px !important;
+} */
+/* .defaultButton,
+.defaultButton:focus {
+  border: none;
+  color: #0256b4;
+  background-color: #eaf4ff;
+  margin: 8px !important;
+}
+.defaultButton:hover {
+  background-color: #eaf4ff;
+  margin: 8px !important;
+} */
+.primaryButton,
+.defaultButton,
+.disabledButton,
+.activateSwitch {
+  margin: 8px !important;
+}
+/* .activateSwitch {
+  margin: 8px !important;
+  background-color: #0256b4;
+} */
+.signOffIcon {
+  width: 10%;
+  padding: 5px 6px;
+}
+
+.sectionCard .ant-card-meta-title,
+.sectionCard .ant-card-head-title,
+.sidebarCard .ant-card-head-title {
+  color: #003673;
+  font-weight: 600;
+}
+.sectionCard .ant-card-meta-description {
+  font-weight: 400;
+}
+.SectionButton-addable {
+  background-color: #eaf4ff;
+  color: #003673;
+}
+.SectionButton-addable:hover,
+.SectionButton-addable:focus {
+  background-color: #eaf4ff;
+}
+.SectionButton-removable {
+  background-color: white;
+  color: auto;
+}
+
+
+.FormRow-labelWithDecorator {
+  width: 4.1%;
+  padding: 5px 0;
+  background-color: #eaf4ff;
+  font-weight: 500;
+  color: #0256b4;
+}
+.FormRow {
+  margin: 8px 0px;
+  min-height: 34px;
+}
+.FormRow-label {
+  background-color: #eaf4ff;
+  font-weight: 500;
+  color: #0256b4;
+}
+.FormRow-data {
+  border-radius: 0 3px 3px 0 !important;
+  border: 2px solid #eaf4ff !important;
+}
+.FormRow-Icon {
+  cursor: pointer !important;
+  color: #0256b4;
+  margin: 0 0 0 8px;
+}
+.FormRow-Icon-Drag {
+  cursor: grab !important;
+  color: #0256b4;
+  margin: 0 0 0 8px;
+}
+.FormRow-Icon-disabled {
+  cursor: not-allowed !important;
+  color: #bbbbbd;
+  margin: 0 0 0 8px;
+}
+
+.dndInput:focus {
+  box-shadow: 0 0 10px 1800px rgba(0, 0, 0, 0.2);
+  outline: none;
+  position:relative;
+  z-index:999;
 }
