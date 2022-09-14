@@ -1,65 +1,95 @@
+import React, { useEffect, useState } from 'react'
+import { useRequest } from 'ahooks';
+
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Space, Table } from 'antd';
-const { Column, ColumnGroup } = Table;
+import { Button, Space, Table, message } from 'antd';
 
-const columns = [
-  {
-    title: 'Code',
-    dataIndex: 'code',
-    key: 'code',
-    //render: (text) => <a>{text}</a>,
-  },
-  {
-    title: 'Specification Name',
-    dataIndex: 'specificationName',
-    key: 'specificationName',
-  },
-  {
-    title: 'Last Edited',
-    dataIndex: 'lastEdited',
-    key: 'lastEdited',
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    render: (_, record) => (
-      <Space size="middle">
-        {/* <a>Edit {record.name}</a>
-        <a>Delete</a> */}
-        <Button icon={<EditOutlined size="small" />} />
-        <Button icon={<DeleteOutlined size="small" />} danger />
-      </Space>
-    ),
-  },
-];
+import { getLabraryList, deleteLibrary } from '@/services/swagger/library'
+import useException from '@/utils/useException';
 
-const data = [
-  {
-    key: 1,
-    code: '0056',
-    specificationName: 'Government Method Statment Cover Page',
-    lastEdited: '2022/03/10 18:00',
-  },
-  {
-    key: 2,
-    code: '0024',
-    specificationName: 'Shek Wu Temp. Work Design Cover Page New',
-    lastEdited: '2022/03/10 18:00',
-  },
-  {
-    key: 3,
-    code: '0055',
-    specificationName: 'Record RD Cover Page Tuen Mun 2022',
-    lastEdited: '2022/03/10 18:00',
-  },
-  {
-    key: 4,
-    code: '0052',
-    specificationName: 'Shek Wu Temp. Work Design Cover Page New',
-    lastEdited: '2022/03/10 18:00',
-  },
-];
+const CoverPageTemplateTable = (props) => {
 
-const CoverPageTemplateTable = () => <Table dataSource={data} columns={columns} />;
+  const { filterOptions, isModalVisible } = props
+
+  const [data, setData] = useState([])
+
+  const { run, loading } = useRequest(
+    () =>
+      getLabraryList({
+        startswith: filterOptions.contains,
+      }),
+    {
+      manual: true,
+      onSuccess: (res) => {
+        if (Array.isArray(res)) {
+          setData(
+            res.map((cell) => ({
+              id: cell.id,
+              name: cell.name,
+              updated_at: cell.updated_at,
+              creator: {
+                id: cell.creator.id,
+                name: cell.creator.name,
+              },
+            })),
+          );
+        }
+      },
+      throwOnError: true,
+      onError: useException,
+    },
+  );
+
+  const handleDeleteSpec = (id) => {
+    deleteLibrary(id).then(() => {
+      message.success('Success')
+    }).catch(() => {
+      message.error('Failed')
+    }).finally(() => {
+      run()
+    })
+  }
+
+  const columns = [
+    {
+      title: 'Code',
+      dataIndex: 'id',
+      key: 'id'
+    },
+    {
+      title: 'Specification Name',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Last Edited',
+      dataIndex: 'created_at',
+      key: 'created_at',
+      render: (_, { updated_at }) => (
+        <>
+          {new Date(updated_at).toLocaleString()}
+        </>
+      )
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (_, record) => (
+        <Space size="middle">
+          <Button icon={<EditOutlined size="small" />} />
+          <Button icon={<DeleteOutlined size="small" />} danger onClick={() => handleDeleteSpec(record.id)} />
+        </Space>
+      ),
+    },
+  ];
+
+  useEffect(() => {
+    run()
+  }, [filterOptions, isModalVisible])
+
+  return (
+    <Table loading={loading} dataSource={data} columns={columns} />
+  )
+};
 
 export default CoverPageTemplateTable;

@@ -1,6 +1,6 @@
 import { Card, Input, Row, Col, Button, Tooltip } from 'antd';
 import { EditOutlined, DeleteOutlined, CloseOutlined, CheckOutlined, PlusCircleOutlined, HolderOutlined, EyeInvisibleOutlined, EyeOutlined, DragOutlined } from '@ant-design/icons';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { sortableContainer, sortableElement, sortableHandle } from 'react-sortable-hoc';
 import { arrayMoveImmutable } from 'array-move';
 import client_logo_2 from './client_logo_2.png';
@@ -42,6 +42,8 @@ const EntityLogoAndHeader = ({
   }
 
   const [fieldOrder,setFieldOrder] = useState(data.fieldOrder)
+  const [client_logoVisible, setClient_logoVisible] = useState(data.client_logoVisible)
+  const [constructor_logoVisible, setConstructor_logoVisible] = useState(data.constructor_logoVisible)
   const [ctrlNumVisible,setCtrlNumVisible] = useState(data.ctrlNumVisible)
 
   const confirmHandler = (index) => {
@@ -51,6 +53,8 @@ const EntityLogoAndHeader = ({
     newArr[index].editing = false;
     newArr[index].data.payload = {
       "fieldOrder": fieldOrder,
+      "client_logoVisible": client_logoVisible,
+      "constructor_logoVisible": constructor_logoVisible,
       "ctrlNumVisible": ctrlNumVisible
     }
     delete newArr[index].originalData;
@@ -58,7 +62,7 @@ const EntityLogoAndHeader = ({
     setEntityLogoAndHeader(newArr[index].data.payload)
   };
 
-  const moveHeaderBlock = (dragIndex, hoverIndex) => {
+  const moveHeaderBlock = useCallback((dragIndex, hoverIndex) => {
     setFieldOrder((prevOrder) =>
       update(prevOrder, {
         $splice: [
@@ -67,7 +71,7 @@ const EntityLogoAndHeader = ({
         ],
       }),
     );
-  };
+  });
 
   // const HeaderBlock = (
   //   blockType,
@@ -88,6 +92,10 @@ const EntityLogoAndHeader = ({
         index={index}
         project={project}
         editing={editing}
+        client_logoVisible={client_logoVisible}
+        setClient_logoVisible={setClient_logoVisible}
+        constructor_logoVisible={constructor_logoVisible}
+        setConstructor_logoVisible={setConstructor_logoVisible}
         ctrlNumVisible={ctrlNumVisible}
         setCtrlNumVisible={setCtrlNumVisible}
         moveHeaderBlock={moveHeaderBlock}
@@ -240,7 +248,7 @@ const EntityLogoAndHeader = ({
   return (
     <>
     <Col flex="auto" style={{ maxWidth: '80%' }}>
-      <Card title="Entity Logos and Headers" style={{ margin: '8px' }}>
+      <Card className='sectionCard' title="Entity Logos and Headers" style={{ margin: '8px' }}>
         <DndProvider backend={HTML5Backend}>
           <Row style={{ width: '100%' }} gutter={[8, 8]}>
             {fieldOrder.map((block, index) => renderBlock(block, index))}

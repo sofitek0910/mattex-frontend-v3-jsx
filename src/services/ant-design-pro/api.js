@@ -2,7 +2,7 @@
 
 /* eslint-disable */
 import { request } from 'umi';
-//import { extend } from 'umi-request';
+import { PROXY_URL } from '@/const';
 import token from '@/utils/token';
 
 /** 获取当前的用户 GET /api/currentUser */
@@ -16,15 +16,17 @@ export async function currentUser(options) {
 /** 退出登录接口 POST /api/login/outLogin */
 
 export async function outLogin(options) {
-  return request('/api/login/outLogin', {
-    method: 'POST',
-    ...(options || {}),
+  return request('https://smmfrt.com/api/logout/', {
+    method: 'GET',
+    // headers: {
+    //   'Authorization': token.get()
+    // }
   });
 }
 /** 登录接口 POST /api/login/account */
 
 export async function login(body, options) {
-  return request('/api/login/account', {
+  return request('https://smmfrt.com/api/login/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -32,6 +34,17 @@ export async function login(body, options) {
     data: body,
     ...(options || {}),
   });
+}
+
+export async function getToken(body, options) {
+  return request(`${PROXY_URL}/api/token/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {})
+  })
 }
 /** 此处后端没有提供注释 GET /api/notices */
 

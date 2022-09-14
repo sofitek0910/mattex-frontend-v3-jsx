@@ -24,7 +24,7 @@ const AttachmentSection = ({
   return (
     <>
     <Col flex="auto" style={{ maxWidth: '80%' }}>
-      <Card title="Attachment" style={{ margin: '8px' }}>
+      <Card className='sectionCard' title="Attachment" style={{ margin: '8px' }}>
         <FormRadio
           builderMode
           mandatory

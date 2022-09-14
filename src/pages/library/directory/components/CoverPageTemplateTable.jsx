@@ -1,14 +1,21 @@
+import { useState, useEffect } from 'react';
+import { useRequest } from 'ahooks';
 import { Button, Space, Table, Tag } from 'antd';
-const { Column, ColumnGroup } = Table;
 
 import { EyeOutlined } from '@ant-design/icons';
 
-import { useState } from 'react';
 import CoverPageTemplateProjectTable1 from './CoverPageTemplateProjectTable1';
 import CoverPageTemplateProjectTable2 from './CoverPageTemplateProjectTable2';
 import CoverPageTemplateProjectTable3 from './CoverPageTemplateProjectTable3';
 
-const CoverPageTemplateTable = () => {
+import { getTemplateList } from '@/services/swagger/library';
+import useException from '@/utils/useException';
+
+const CoverPageTemplateTable = (props) => {
+  const { filterOptions } = props;
+
+  const [templateList, setTemplateList] = useState([]);
+  const [templateDetail, setTemplateDetail] = useState();
   const [step1, setStep1] = useState(false);
   const [step2, setStep2] = useState(false);
   const [step3, setStep3] = useState(false);
@@ -16,172 +23,140 @@ const CoverPageTemplateTable = () => {
   const columns = [
     {
       title: 'Template ID',
-      dataIndex: 'templateId',
-      key: 'templateId',
-      //render: (text) => <a>{text}</a>,
+      dataIndex: 'id',
+      key: 'id',
     },
     {
       title: 'Template Name',
-      dataIndex: 'templateName',
-      key: 'templateName',
+      dataIndex: 'name',
+      key: 'name',
     },
     {
       title: 'Projects',
-      dataIndex: 'projects',
-      key: 'projects',
-      render: (_, { projects }) => (
+      dataIndex: 'project',
+      key: 'project',
+      render: (_, { project }) => (
         <>
-          {projects.map((project) => {
-            return (
-              <Tag
-                key={project}
-                style={{ maxWidth: '200px', textOverflow: 'ellipsis', overflow: 'hidden' }}
-              >
-                {project}
-              </Tag>
-            );
-          })}
+          {project.project_name.length < 50
+            ? project.project_name
+            : `${project.project_name.substring(0, 50)}...`}
         </>
       ),
     },
     {
       title: 'Submission Type',
-      dataIndex: 'submissionType',
-      key: 'submissionType',
+      dataIndex: 'submission_type',
+      key: 'submission_type',
+      render: (_, { submission_type }) => (
+        <>
+          {submission_type.map((submission) => (
+            <Tag key={submission.submission_type_id} style={{ margin: '2px 2px 2px 0' }}>
+              {submission.display_name}
+            </Tag>
+          ))}
+        </>
+      ),
     },
     {
       title: 'Client',
-      dataIndex: 'clients',
-      key: 'clients',
-      render: (_, { clients }) => (
-        <>
-          {clients.map((client) => {
-            return (
-              <Tag
-                key={client}
-                style={{ maxWidth: '200px', textOverflow: 'ellipsis', overflow: 'hidden' }}
-              >
-                {client}
-              </Tag>
-            );
-          })}
-        </>
+      dataIndex: 'creator',
+      key: 'creator',
+      render: (_, { creator }) => (
+        <Tag style={{ maxWidth: '200px', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+          {creator.name}
+        </Tag>
       ),
     },
     {
       title: 'Status',
       key: 'status',
       dataIndex: 'status',
-      render: (_, { status }) => (
-        <>
-          {status.map((tag) => {
-            let color = 'green';
+      render: (_, { status }) => {
+        let color = 'green';
 
-            if (tag === 'Active') {
-              color = 'green';
-            } else if (tag === 'In Progress') {
-              color = 'orange';
-            } else if (tag === 'Inactive') {
-              color = 'volcano';
-            }
-
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
-      ),
+        if (status === 'Active') {
+          color = 'green';
+        } else if (status === 'In Progress') {
+          color = 'orange';
+        } else if (status === 'Inactive') {
+          color = 'volcano';
+        }
+        return <Tag color={color}>{status.toUpperCase()}</Tag>;
+      },
     },
     {
       title: 'Last Edited',
-      dataIndex: 'lastEdited',
-      key: 'lastEdited',
+      dataIndex: 'updated_at',
+      key: 'updated_at',
+      render: (_, { updated_at }) => <>{new Date(updated_at).toLocaleString()}</>,
     },
     {
       title: 'Action',
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          {/* <a>View {record.name}</a>
-          <a>Open</a> */}
-          <Button icon={<EyeOutlined size="small" />} onClick={() => setStep1(true)} />
+          <Button
+            icon={<EyeOutlined size="small" />}
+            onClick={() => {
+              setTemplateDetail(record);
+              setStep1(true);
+            }}
+          />
         </Space>
       ),
     },
   ];
 
-  const data = [
+  const { run, loading } = useRequest(
+    () =>
+      getTemplateList({
+        project_id: 1,
+        ...filterOptions,
+      }),
     {
-      key: 1,
-      templateId: '0056',
-      templateName: 'Government Method Statment Cover Page',
-      projects: ['1025 Main Contract for the Proposed Composite Development at No. 18 Hang'],
-      submissionType: 'Method Statement',
-      clients: ['Mattex', 'Luk'],
-      status: ['Active'],
-      lastEdited: '2022/03/10 18:00',
+      manual: true,
+      onSuccess: (res) => {
+        console.log(res);
+        setTemplateList(res);
+      },
+      throwOnError: true,
+      onError: useException,
     },
-    {
-      key: 2,
-      templateId: '0024',
-      templateName: 'Shek Wu Temp. Work Design Cover Page New',
-      projects: ['0992 Shek Wu Hui Effluent Polishing Plant'],
-      submissionType: 'Method Statement',
-      clients: ['Mattex'],
-      status: ['In Progress'],
-      lastEdited: '2022/03/10 18:00',
-    },
-    {
-      key: 3,
-      templateId: '0055',
-      templateName: 'Record RD Cover Page Tuen Mun 2022',
-      projects: [
-        '0968 DC/2018/09 Rehabilitation of Trunk Sewers in Tuen Mun',
-        '0992 Shek Wu Hui Effluent Polishing Plant',
-      ],
-      submissionType: 'Method Statement',
-      clients: ['Mattex', 'Luk'],
-      status: ['Active'],
-      lastEdited: '2022/03/10 18:00',
-    },
-    {
-      key: 4,
-      templateId: '0052',
-      templateName: 'Shek Wu Temp. Work Design Cover Page New',
-      projects: [
-        '0997 Kwu Tung North Development Area, Phase 1: Roads and Drains Between Kwu Tung North...',
-        '1025 Main Contract for the Proposed Composite Development at No. 18 Hang...',
-      ],
-      submissionType: 'Method Statement',
-      clients: [],
-      status: ['Inactive'],
-      lastEdited: '2022/03/10 18:00',
-    },
-  ];
+  );
 
-  console.log(`step1: ${step1}`);
-  console.log(`step2: ${step2}`);
-  console.log(`step3: ${step3}`);
+  useEffect(() => {
+    run();
+  }, [filterOptions]);
 
   return (
     <>
-      {!step1 && !step2 && !step3 ? <Table dataSource={data} columns={columns} /> : <></>}
+      {!step1 && !step2 && !step3 ? (
+        <Table loading={loading} dataSource={templateList} columns={columns} />
+      ) : (
+        <></>
+      )}
 
       {step1 && !step2 && !step3 ? (
-        <CoverPageTemplateProjectTable1 step2={step2} setStep2={setStep2} />
+        <CoverPageTemplateProjectTable1
+          step2={step2}
+          setStep2={setStep2}
+          projectDetail={templateDetail.project}
+        />
       ) : (
         <></>
       )}
 
       {step1 && step2 && !step3 ? (
-        <CoverPageTemplateProjectTable2 step3={step3} setStep3={setStep3} />
+        <CoverPageTemplateProjectTable2
+          step3={step3}
+          setStep3={setStep3}
+          submissionTypes={templateDetail.submission_type ?? []}
+        />
       ) : (
         <></>
       )}
 
-      {step1 && step2 && step3 ? <CoverPageTemplateProjectTable3 /> : <></>}
+      {step1 && step2 && step3 ? <CoverPageTemplateProjectTable3 data={templateList} /> : <></>}
     </>
   );
 };
