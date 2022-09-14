@@ -9,7 +9,7 @@ export const SIDEBAR_ITEMS = [
 //   },
   {
       type: 'EntityLogoAndHeader',
-      title: 'EntityLogoAndHeader',
+      title: 'Entity Logo and Header',
       inUse: false,
       mandatory: true,
   },
@@ -39,25 +39,25 @@ export const SIDEBAR_ITEMS = [
   },
   {
       type: 'DescriptionOfContent',
-      title: 'DescriptionOfContent',
+      title: 'Description of Content',
       inUse: false,
       mandatory: true,
   },
   {
       type: 'AboutThisSubmission',
-      title: 'AboutThisSubmission',
+      title: 'About This Submission',
       inUse: false,
       mandatory: true,
   },
   {
       type: 'FutureReply',
-      title: 'FutureReply',
+      title: 'Future Reply',
       inUse: false,
       mandatory: true,
   },
   {
       type: 'SignOff',
-      title: 'SignOff',
+      title: 'Sign Off',
       inUse: false,
       mandatory: true,
   },

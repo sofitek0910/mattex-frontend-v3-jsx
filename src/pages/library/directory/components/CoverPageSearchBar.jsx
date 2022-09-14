@@ -1,53 +1,64 @@
+import React, { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+
 import { Button, Form, Input, Select } from 'antd';
-import { useEffect, useState } from 'react';
-const { TextArea } = Input;
-const { Search } = Input;
-const { Option } = Select;
 
-const onChange = (value) => {
-  console.log(`selected ${value}`);
-};
+import { getSubmissionTypeList } from '@/services/swagger/submission';
+import { getUserListByProjectId } from '@/services/swagger/library';
+import { TEMPLATE_STATUS } from '@/const';
+import useException from '@/utils/useException';
 
-const CoverPageSearchBar = () => {
+const CoverPageSearchBar = (props) => {
+  const { handleChange, onReset } = props;
+
   const [form] = Form.useForm();
-  const [, forceUpdate] = useState({});
-  const data = {
-    attributeKey: 'title',
-    attributeLabel: 'Title',
-    attributeValue: 'Document 1',
-  };
-  const [dataSource, setDataSource] = useState(data);
-  console.log(`dataSource.title: ${dataSource.title}`);
-  console.log(`data.text: ${data.title}`);
-  const [value, setValue] = useState('');
 
-  // To disable submit button at the beginning.
+  const [submissionTypes, setSubmissionTypes] = useState([]);
+  const [creators, setCreators] = useState();
+
+  const onFinish = () => {
+    form.resetFields();
+    onReset();
+  };
+
+  const { run } = useRequest(() => getSubmissionTypeList(), {
+    manual: true,
+    onSuccess: (res) => {
+      if (Array.isArray(res)) {
+        setSubmissionTypes(res);
+      }
+    },
+    throwOnError: true,
+    onError: useException,
+  });
+
+  const { run: getUserList } = useRequest(() => getUserListByProjectId({ projectId: 1 }), {
+    manual: true,
+    onSuccess: (res) => {
+      setCreators(res.data);
+    },
+    throwOnError: true,
+    onError: useException,
+  });
+
   useEffect(() => {
-    forceUpdate({});
+    run();
+    getUserList();
   }, []);
-
-  const onFinish = (values) => {
-    console.log('Finish:', values);
-  };
-
-  const onSearch = (value) => console.log(value);
 
   return (
     <>
       <Form form={form} name="horizontal_login" layout="inline" onFinish={onFinish}>
-        <Form.Item
-          name="search"
-          rules={[
-            {
-              required: true,
-              message: 'Field cannot be empty',
-            },
-          ]}
-        >
-          <Search placeholder="input search text" onSearch={onSearch} style={{ width: 200 }} />
+        <Form.Item name="contains">
+          <Input.Search
+            placeholder="input search text"
+            onSearch={(val) => handleChange({ name: 'contains', value: val })}
+            style={{ width: 200 }}
+          />
         </Form.Item>
+
         <Form.Item
-          name="Status"
+          name="status"
           rules={[
             {
               required: true,
@@ -59,19 +70,22 @@ const CoverPageSearchBar = () => {
             showSearch
             placeholder="Status"
             optionFilterProp="children"
-            onChange={onChange}
-            onSearch={onSearch}
+            onChange={(value) => handleChange({ name: 'status', value: value })}
             filterOption={(input, option) =>
               option.children.toLowerCase().includes(input.toLowerCase())
             }
+            style={{ width: '150px' }}
           >
-            <Option value="Status1">Status1</Option>
-            <Option value="Status2">Status2</Option>
-            <Option value="Status3">Status3</Option>
+            {TEMPLATE_STATUS.map((cell) => (
+              <Select.Option value={cell.data} key={cell.data}>
+                {cell.label}
+              </Select.Option>
+            ))}
           </Select>
         </Form.Item>
+
         <Form.Item
-          name="SubmissionType"
+          name="submission_type"
           rules={[
             {
               required: true,
@@ -83,19 +97,25 @@ const CoverPageSearchBar = () => {
             showSearch
             placeholder="Submission Type"
             optionFilterProp="children"
-            onChange={onChange}
-            onSearch={onSearch}
+            onChange={(value) => handleChange({ name: 'submission_type', value: value })}
             filterOption={(input, option) =>
               option.children.toLowerCase().includes(input.toLowerCase())
             }
+            style={{ width: '200px' }}
           >
-            <Option value="Submission Type 1">Submission Type 1</Option>
-            <Option value="Submission Type 2">Submission Type 2</Option>
-            <Option value="Submission Type 3">Submission Type 3</Option>
+            {submissionTypes?.map((submissionType) => (
+              <Select.Option
+                value={submissionType.submission_type_id}
+                key={submissionType.submission_type_id}
+              >
+                {submissionType.display_name}
+              </Select.Option>
+            ))}
           </Select>
         </Form.Item>
+
         <Form.Item
-          name="createBy"
+          name="user_id"
           rules={[
             {
               required: true,
@@ -107,15 +127,20 @@ const CoverPageSearchBar = () => {
             showSearch
             placeholder="Create By"
             optionFilterProp="children"
-            onChange={onChange}
-            onSearch={onSearch}
+            onChange={(value) => handleChange({ name: 'user_id', value: value })}
             filterOption={(input, option) =>
               option.children.toLowerCase().includes(input.toLowerCase())
             }
+            style={{ width: '150px' }}
           >
-            <Option value="All">All</Option>
+            {creators?.map((creator) => (
+              <Select.Option value={creator.id} key={creator.id}>
+                {creator.name}
+              </Select.Option>
+            ))}
           </Select>
         </Form.Item>
+
         <Form.Item shouldUpdate>
           {() => (
             <Button

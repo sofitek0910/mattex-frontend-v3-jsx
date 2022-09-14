@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import Icon, { CloseOutlined, EditOutlined, EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
+import Icon, { DeleteOutlined, EditOutlined, EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
 import { Button, Input } from 'antd';
 
 import TitleEditPopup from './TitleEditPopup';
@@ -204,7 +204,7 @@ function FormRow({
           //(removable&&removeRow)?(
           formEditing && removable ? (
             <div style={{ width: '3%', padding: '5px 6px' }}>
-              <CloseOutlined
+              <DeleteOutlined
                 onClick={formEditing ? () => removeRow(index) : () => {}}
                 style={{
                   cursor: formEditing ? 'pointer' : 'not-allowed',

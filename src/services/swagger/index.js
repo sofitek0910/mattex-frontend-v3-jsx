@@ -6,8 +6,10 @@
 import * as pet from './pet';
 import * as store from './store';
 import * as user from './user';
+import * as submission from './submission'
 export default {
   pet,
   store,
   user,
+  submission
 };

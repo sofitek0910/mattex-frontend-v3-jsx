@@ -54,7 +54,7 @@ const SectionSignOff = ({
   return (
     <>
     <Col flex="auto" style={{ maxWidth: '80%' }}>
-      <Card title="Sign Offs" style={{ margin: '8px' }}>
+      <Card className='sectionCard' title="Sign Offs" style={{ margin: '8px' }}>
         <SignOffBlock builderMode={builderMode} showSubmitter={showSubmitter} />
 
         <FormSwitch

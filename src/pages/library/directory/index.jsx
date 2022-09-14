@@ -1,64 +1,73 @@
+import { useState, useEffect } from 'react';
+import { history } from 'umi';
 import { PlusOutlined } from '@ant-design/icons';
 import { GridContent, PageContainer, RouteContext } from '@ant-design/pro-layout';
-import { Badge, Button, Card, Form, Input, Modal, Steps } from 'antd';
-import { useState } from 'react';
-import { history } from 'umi';
+import { Button, Card, Form, Input, Modal, message, Select } from 'antd';
+
 import CoverPageSearchBar from './components/CoverPageSearchBar';
 import CoverPageTemplateTable from './components/CoverPageTemplateTable';
 import SpecificationNameTable from './components/SpecificationNameTable';
 import SpecificationSetTable from './components/SpecificationSetTable';
+
+import { createLibrary } from '@/services/swagger/library'
+import { getProjectList } from '@/services/swagger/projects'
+import { getSubmissionTypeList } from '@/services/swagger/submission'
+
 import styles from './style.less';
 
-const { Step } = Steps;
-const ButtonGroup = Button.Group;
-const { TextArea } = Input;
-
-
 const Advanced = () => {
+  const [filterOptions, setFilterOptions] = useState({});
+
   const [tabStatus, seTabStatus] = useState({
     tabActiveKey: 'SpecificationSets',
   });
-  // const { data = {}, loading } = useRequest(queryAdvancedProfile);
-  // //const { advancedOperation1, advancedOperation2, advancedOperation3 } = data;
-  // const { coverPageTemplateColumns, coverPageTemplateDatas,
-  //   SpecificationNameColumns, SpecificationNameDatas,
-  //   SpecificationSetsColumns, SpecificationSetsDatas } = data;
 
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [projects, setProjects] = useState([])
+  const [submissionTypes, setSubmissionTypes] = useState([])
 
   const showModal = () => {
     setIsModalVisible(true);
   };
+
   const handleCoverPageTemplateOK = (values) => {
     setIsModalVisible(false);
-    let description = '&description='
-    if (typeof values.setDescription !== 'undefined'){
-      description += values.setDescription
+    let description = '&description=';
+    if (typeof values.description !== 'undefined') {
+      description += values.description;
     }
-    history.push(`/library/editor?title=${values.setTitle}${description}`);
+    history.push(`/library/editor?title=${values.title}&project=${values.project}&submission_type=${values.submission_type}${description}`);
   };
-  
-  const handleSpecificationNameOK = () => {
-    setIsModalVisible(false);
-    history.push('/library/editor');
+
+  const handleSpecificationNameOK = (values) => {
+    const postBody = {
+      name: values.setTitle,
+      description: values.setDescription
+    }
+    createLibrary(postBody).then(() => {
+      setIsModalVisible(false);
+    }).catch(() => {
+      message.error('Failed to create new specification name.')
+    })
   };
+
   const handleSpecificationSetsOK = (values) => {
     setIsModalVisible(false);
-    let description = '&description='
-    if (typeof values.setDescription !== 'undefined'){
-      description += values.setDescription
+    let description = '&description=';
+    if (typeof values.setDescription !== 'undefined') {
+      description += values.setDescription;
     }
     history.push(`/library/setCreator?title=${values.setTitle}${description}`);
-    // history.push(`/library/setCreator?title=${}`);
   };
+
   const handleCancel = () => {
     setIsModalVisible(false);
   };
 
   const contentList = {
-    CoverPageTemplate: <CoverPageTemplateTable />,
-    SpecificationName: <SpecificationNameTable />,
-    SpecificationSets: <SpecificationSetTable />,
+    CoverPageTemplate: <CoverPageTemplateTable filterOptions={filterOptions} />,
+    SpecificationName: <SpecificationNameTable filterOptions={filterOptions} isModalVisible={isModalVisible} />,
+    SpecificationSets: <SpecificationSetTable filterOptions={filterOptions} />,
   };
 
   const onTabChange = (tabActiveKey) => {
@@ -71,20 +80,42 @@ const Advanced = () => {
         {tabStatus.tabActiveKey == 'CoverPageTemplate'
           ? 'Create Cover Page Template'
           : tabStatus.tabActiveKey == 'SpecificationName'
-          ? 'Add Specification'
-          : 'Create Specification Table'}
+            ? 'Add Specification'
+            : 'Create Specification Table'}
       </Button>
     </div>
   );
+
   const description = (
-    <RouteContext.Consumer>{({ isMobile }) => <CoverPageSearchBar />}</RouteContext.Consumer>
+    <RouteContext.Consumer>
+      {({ isMobile }) => (
+        <CoverPageSearchBar
+          handleChange={(e) => {
+            setFilterOptions({
+              ...filterOptions,
+              [e.name]: e.value,
+            });
+          }}
+          onReset={() => setFilterOptions({})}
+        />
+      )}
+    </RouteContext.Consumer>
   );
+
+  useEffect(() => {
+    getProjectList().then((res) => {
+      setProjects(res.data.map((cell) => ({ project_id: cell.project_id, project_display_name: cell.project_display_name })))
+    })
+
+    getSubmissionTypeList().then((res) => {
+      setSubmissionTypes(res)
+    })
+  }, [])
 
   return (
     <>
       <PageContainer
         title="Asset Library"
-        // extra={action}
         className={styles.pageHeader}
         content={description}
         extraContent={extra}
@@ -107,12 +138,7 @@ const Advanced = () => {
       >
         <div className={styles.main}>
           <GridContent>
-            <Card
-              className={styles.tabsCard}
-              bordered={false}
-              // tabList={operationTabList}
-              onTabChange={onTabChange}
-            >
+            <Card className={styles.tabsCard} bordered={false} onTabChange={onTabChange}>
               {contentList[tabStatus.tabActiveKey]}
             </Card>
           </GridContent>
@@ -122,51 +148,35 @@ const Advanced = () => {
       <Modal
         title={
           tabStatus.tabActiveKey == 'CoverPageTemplate'
-          ? 'Create Cover Template'
+            ? 'Create Cover Template'
             : tabStatus.tabActiveKey == 'SpecificationName'
-              ? 'Create Specification': 'Create Specification Set'
+              ? 'Create Specification'
+              : 'Create Specification Set'
         }
         visible={isModalVisible}
-        /*onOk={
-          tabStatus.tabActiveKey == 'CoverPageTemplate'
-            ? handleCoverPageTemplateOK
-            : (tabStatus.tabActiveKey == 'SpecificationName'
-            ? handleSpecificationNameOK
-            : handleSpecificationSetsOK)
-        }*/
         okButtonProps={{
-          htmlType: 'submit', 
-          form: tabStatus.tabActiveKey == 'CoverPageTemplate'
-          ? 'createCoverTemplate'
-          : (
-            tabStatus.tabActiveKey == 'SpecificationName'
-            ? 'createSpecificationName'
-            : 'createSpecificationSet'
-          )
+          htmlType: 'submit',
+          form:
+            tabStatus.tabActiveKey == 'CoverPageTemplate'
+              ? 'createCoverTemplate'
+              : tabStatus.tabActiveKey == 'SpecificationName'
+                ? 'createSpecificationName'
+                : 'createSpecificationSet',
         }}
         onCancel={handleCancel}
         okText="ok"
         cancelText="cancel"
       >
-        {/* <h3>
-          {tabStatus.tabActiveKey == 'CoverPageTemplate'
-            ? 'Create Cover Template'
-            : tabStatus.tabActiveKey == 'SpecificationName'
-            ? 'Create Specification'
-            : 'Create Specification Set'}
-        </h3> */}
-
         {tabStatus.tabActiveKey == 'CoverPageTemplate' ? (
           <Form
-           name="createCoverTemplate"
-           id="createCoverTemplate"
-           onFinish={handleCoverPageTemplateOK}
-
+            name="createCoverTemplate"
+            id="createCoverTemplate"
+            onFinish={handleCoverPageTemplateOK}
           >
             <div style={{ margin: '24px 0' }} />
-            <h5>Set Title</h5>
+            <h5>Template Title</h5>
             <Form.Item
-              name="setTitle"
+              name="title"
               rules={[
                 {
                   required: true,
@@ -178,28 +188,67 @@ const Advanced = () => {
             </Form.Item>
 
             <div style={{ margin: '24px 0' }} />
-            <h5>Set Description</h5>
+            <h5>Description</h5>
             <Form.Item
-              name="setDescription"
-              // rules={[
-              //   {
-              //     required: true,
-              //     message: `Description is required.`,
-              //   },
-              // ]}
+              name="description"
             >
-              <TextArea
-                //onChange={e => setValue(e.target.value)}
+              <Input.TextArea
                 placeholder=""
                 autoSize={{ minRows: 3, maxRows: 5 }}
               />
             </Form.Item>
+
+            <div style={{ margin: '24px 0' }} />
+            <h5>Link to Project</h5>
+            <Form.Item
+              name="project"
+              rules={[
+                {
+                  required: true,
+                  message: `Project is required.`,
+                },
+              ]}
+            >
+              <Select
+                placeholder="Please select"
+              >
+                {
+                  projects.map((project) => (
+                    <Select.Option value={project.project_id} key={project.project_display_name}>{project.project_display_name}</Select.Option>
+                  ))
+                }
+              </Select>
+            </Form.Item>
+
+            <div style={{ margin: '24px 0' }} />
+            <h5>Submission Type</h5>
+            <Form.Item
+              name="submission_type"
+              rules={[
+                {
+                  required: true,
+                  message: `Submission is required.`,
+                },
+              ]}
+            >
+              <Select
+                placeholder="Please select"
+              >
+                {
+                  submissionTypes.map((submissionType) => (
+                    <Select.Option value={submissionType.submission_type_id} key={submissionType.submission_type_id}>
+                      {submissionType.display_name}
+                    </Select.Option>
+                  ))
+                }
+              </Select>
+            </Form.Item>
           </Form>
         ) : tabStatus.tabActiveKey == 'SpecificationName' ? (
-          <Form 
+          <Form
             name="createSpecificationName"
             id="createSpecificationName"
-            onFinish={handleSpecificationNameOK}
+            onFinish={(values) => handleSpecificationNameOK(values)}
           >
             <div style={{ margin: '24px 0' }} />
             <h5>Set Title</h5>
@@ -219,15 +268,8 @@ const Advanced = () => {
             <h5>Set Description</h5>
             <Form.Item
               name="setDescription"
-              // rules={[
-              //   {
-              //     required: true,
-              //     message: `Description is required.`,
-              //   },
-              // ]}
             >
-              <TextArea
-                //onChange={e => setValue(e.target.value)}
+              <Input.TextArea
                 placeholder=""
                 autoSize={{ minRows: 3, maxRows: 5 }}
               />
@@ -235,9 +277,9 @@ const Advanced = () => {
           </Form>
         ) : (
           <Form
-           name="createSpecificationSet"
-           id="createSpecificationSet"
-           onFinish={(values) => handleSpecificationSetsOK(values)}
+            name="createSpecificationSet"
+            id="createSpecificationSet"
+            onFinish={(values) => handleSpecificationSetsOK(values)}
           >
             <div style={{ margin: '24px 0' }} />
             <h5>Set Title</h5>
@@ -257,15 +299,8 @@ const Advanced = () => {
             <h5>Set Description</h5>
             <Form.Item
               name="setDescription"
-              // rules={[
-              //   {
-              //     required: true,
-              //     message: `Description is required.`,
-              //   },
-              // ]}
             >
-              <TextArea
-                //onChange={e => setValue(e.target.value)}
+              <Input.TextArea
                 placeholder=""
                 autoSize={{ minRows: 3, maxRows: 5 }}
               />
@@ -273,7 +308,6 @@ const Advanced = () => {
           </Form>
         )}
       </Modal>
-
     </>
   );
 };
