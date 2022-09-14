@@ -35,18 +35,27 @@ export default defineConfig({
     {
       path: '/submission',
       name: 'Submissions',
+      hideInMenu: true,
       routes: [
+        {
+          // component: './submission/Create',
+          component: './submission/editor',
+          path: '/submission/:projectId/create',
+          name: 'Create Submission',
+          //layout: true,
+        },
         {
           path: '/submission/list',
           component: './submission/Index',
           name: 'Submissions List',
-          layout: true,
+          //layout: true,
         },
         {
-          path: '/submission/details',
+          path: '/submission/:system_id',
           component: './submission/Details',
           name: 'Submission Details',
           layout: true,
+          hideInMenu: true,
         },
       ],
     },
@@ -115,28 +124,47 @@ export default defineConfig({
     //   ],
     // },
     {
-
       /***********************
-       * 
+       *
        * the module that we created
-       * 
+       *
        * ******************* */
 
-      path: '/Projects',
+      path: '/projects',
       icon: 'FolderOutlined',
-      name: 'projectPage',
+      name: 'Projects',
       routes: [
         {
-          path: '/Projects',
-          redirect: '/',
+          path: '/projects',
+          redirect: '/projects/projectList',
+        },
+        {
+          name: 'Project List',
+          icon: 'smile',
+          path: '/projects/projectList',
+          component: './projects/projectList',
+        },
+        {
+          hideInMenu: true,
+          name: 'Submission List',
+          icon: 'smile',
+          path: '/projects/submissionList',
+          component: './submission/Index',
+        },
+        {
+          hideInMenu: true,
+          name: 'Setting',
+          icon: 'smile',
+          path: '/projects/setting',
+          component: './submission/setting',
         },
       ],
     },
     {
       /***********************
-       * 
+       *
        * the module that we created
-       * 
+       *
        * ******************* */
       path: '/library',
       icon: 'ReadOutlined',
@@ -170,11 +198,11 @@ export default defineConfig({
     },
     {
       /***********************
-       * 
+       *
        * the module that we created
-       * 
+       *
        * ******************* */
-      path: '/CompanyProfile',
+      path: '/companyProfile',
       icon: 'HddOutlined',
       name: 'Company Profile',
       routes: [
@@ -209,7 +237,7 @@ export default defineConfig({
     {
       hideInMenu: true,
       hideChildrenInMenu: true,
-      path: '/form',    //form template, just for reference
+      path: '/form', //form template, just for reference
       icon: 'form',
       name: 'form',
       routes: [
@@ -240,7 +268,7 @@ export default defineConfig({
     {
       hideInMenu: true,
       hideChildrenInMenu: true,
-      path: '/list',  //list template, just for reference
+      path: '/list', //list template, just for reference
       icon: 'table',
       name: 'list',
       routes: [
@@ -300,7 +328,7 @@ export default defineConfig({
     {
       hideInMenu: true,
       hideChildrenInMenu: true,
-      path: '/profile',   //detail page template, just for reference, content not translated
+      path: '/profile', //detail page template, just for reference, content not translated
       name: 'profile',
       icon: 'profile',
       routes: [
@@ -325,7 +353,7 @@ export default defineConfig({
     {
       hideInMenu: true,
       hideChildrenInMenu: true,
-      name: 'result',   //result page template, just for reference, content not translated
+      name: 'result', //result page template, just for reference, content not translated
       icon: 'CheckCircleOutlined',
       path: '/result',
       routes: [
@@ -350,7 +378,7 @@ export default defineConfig({
     {
       hideInMenu: true,
       hideChildrenInMenu: true,
-      name: 'exception',    //exception template, just for reference
+      name: 'exception', //exception template, just for reference
       icon: 'warning',
       path: '/exception',
       routes: [
@@ -381,7 +409,7 @@ export default defineConfig({
     {
       hideInMenu: true,
       hideChildrenInMenu: true,
-      name: 'account',    //personal profile template, just for reference
+      name: 'account', //personal profile template, just for reference
       icon: 'user',
       path: '/account',
       routes: [
@@ -409,7 +437,7 @@ export default defineConfig({
     {
       hideInMenu: true,
       hideChildrenInMenu: true,
-      name: 'editor',   // flowcharts & diagrams editortemplate, just for reference, content not translated
+      name: 'editor', // flowcharts & diagrams editortemplate, just for reference, content not translated
       icon: 'highlight',
       path: '/editor',
       routes: [

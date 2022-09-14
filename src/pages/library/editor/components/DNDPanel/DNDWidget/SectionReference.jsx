@@ -1,6 +1,13 @@
 import { Button, Card, Input, Col, Form, Tooltip } from 'antd';
 
-import { EditOutlined, DeleteOutlined, CloseOutlined, CheckOutlined, PlusCircleOutlined, HolderOutlined } from '@ant-design/icons';
+import {
+  EditOutlined,
+  DeleteOutlined,
+  CloseOutlined,
+  CheckOutlined,
+  PlusCircleOutlined,
+  HolderOutlined,
+} from '@ant-design/icons';
 import { arrayMoveImmutable } from 'array-move';
 import { useCallback, useState } from 'react';
 import { sortableContainer, sortableElement, sortableHandle } from 'react-sortable-hoc';
@@ -8,30 +15,30 @@ import InputComponent from './InputComponent';
 import FormRow from './FormRow';
 const { TextArea } = Input;
 
-const ReferenceSection = ({ 
-  sortableIndex, 
-  editing, 
-  data, 
-  rootDataSource, 
+const ReferenceSection = ({
+  sortableIndex,
+  editing,
+  data,
+  rootDataSource,
   setRootDataSource,
   editHandler,
   deleteHandler,
-  cancelHandler, 
-  setReferenceSection
- }) => {
+  cancelHandler,
+  setReferenceSection,
+}) => {
   const [reference, setReference] = useState(data.reference);
 
   const confirmHandler = (index) => {
-    console.log('(newSection)rootDataSource: ',rootDataSource)
+    console.log('(newSection)rootDataSource: ', rootDataSource);
     //console.log(`[{${index}}] - confirmHandler - rootDataSource: ${JSON.stringify(rootDataSource)}`)
     let newArr = [...rootDataSource];
     newArr[index].editing = false;
     newArr[index].data.payload = {
-      'reference': reference
-    }
+      reference: reference,
+    };
     delete newArr[index].originalData;
     setRootDataSource(newArr);
-    setReferenceSection(newArr[index].data.payload)
+    setReferenceSection(newArr[index].data.payload);
   };
 
   const dataChangeCallback = useCallback((index, label, value) => {
@@ -44,7 +51,6 @@ const ReferenceSection = ({
   });
 
   const itemRemoveCallback = useCallback((index) => {
-    
     console.log(`[${index}] - ${reference[index]}`);
     let newArr = [...reference];
     console.log(newArr);
@@ -54,7 +60,7 @@ const ReferenceSection = ({
   });
 
   const dataEditCallback = useCallback((title, value) => {
-    console.log('(newSection)title, value',title, value)
+    console.log('(newSection)title, value', title, value);
     let tempPairingList = JSON.parse(JSON.stringify(reference));
     const pairingIndex = tempPairingList.findIndex((obj) => obj.key == title);
     tempPairingList[pairingIndex].value = value;
@@ -66,7 +72,7 @@ const ReferenceSection = ({
     //let tempPairingList = JSON.parse(JSON.stringify(reference));
     //tempPairingList[index].key = newTitle;
     let newArr = [...reference];
-    newArr[index].key = newTitle
+    newArr[index].key = newTitle;
     setReference(newArr);
   });
 
@@ -98,15 +104,17 @@ const ReferenceSection = ({
       }}
     >
       <Form layout="inline">
-        {editing? 
-          (
-            <Form.Item style={{ margin: '0px' }}>
-              <DragHandle />
-            </Form.Item>
-          ):(<></>)
-        }
-        
-        <Form.Item style={ editing? { margin: '0px', width: '95%' }:{margin: '0px', width: '100%'}}>
+        {editing ? (
+          <Form.Item style={{ margin: '0px' }}>
+            <DragHandle />
+          </Form.Item>
+        ) : (
+          <></>
+        )}
+
+        <Form.Item
+          style={editing ? { margin: '0px', width: '95%' } : { margin: '0px', width: '100%' }}
+        >
           {/*<FormRow 
                 title={value.key}
                 data={value.value}
@@ -126,16 +134,17 @@ const ReferenceSection = ({
                 
           /> */}
           <InputComponent
-              editing={editing}
-              label={value.pairing.key}
-              //placeholder={item.placeholder}
-              prefilledValue={value.pairing.value}
-              index={value.index}
-              canRemove
-              canEditLabel
-              changeHandler={dataChangeCallback}
-              removeHandler={itemRemoveCallback}
-              labelEditHandler={titleEditCallback}
+            editing={editing}
+            label={value.pairing.key}
+            //placeholder={item.placeholder}
+            prefilledValue={value.pairing.value}
+            index={value.index}
+            canRemove
+            canEditLabel
+            changeHandler={dataChangeCallback}
+            removeHandler={itemRemoveCallback}
+            labelEditHandler={titleEditCallback}
+            disabled //reference is not prefillable in template
           />
         </Form.Item>
       </Form>
@@ -159,7 +168,6 @@ const ReferenceSection = ({
     tempPairingList.splice(index, 1);
     setReference(tempPairingList);
   };
-
 
   const renderRow = (pairing, index) => {
     return (
@@ -190,48 +198,79 @@ const ReferenceSection = ({
     }
   };
 
+  const shouldCancelStart = (e) => {
+    console.log('document.activeElement:',document.activeElement)
+    //return (document.activeElement.nodeName === 'INPUT')
+    return (document.activeElement.className.includes('dndInput'))  //self-defined classname of inputbox in InputComponent
+  }
+
   return (
     <>
-    <Col flex="auto" style={{ maxWidth: '80%' }}>
-      <Card title="Reference" style={{ margin: '8px' }}>
-        {/*reference.map((pairing, index) => renderRow(pairing, index))*/}
-        <SortableContainer onSortEnd={onSortEnd} useDragHandle>
+      <Col flex="auto" style={{ maxWidth: '80%' }}>
+        <Card className="sectionCard" title="Reference" style={{ margin: '8px' }}>
+          {/*reference.map((pairing, index) => renderRow(pairing, index))*/}
+          <SortableContainer onSortEnd={onSortEnd} shouldCancelStart={shouldCancelStart} useDragHandle>
             {reference.map((pairing, index) => (
-              <SortableItem key={`item-${index}`} index={index} value={{'index':index, 'pairing': pairing}} />
+              <SortableItem
+                key={`item-${index}`}
+                index={index}
+                value={{ index: index, pairing: pairing }}
+              />
             ))}
-        </SortableContainer>
+          </SortableContainer>
 
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '4px' }}>
-          <Button
-            className="formButton"
-            type="primary"
-            icon={<PlusCircleOutlined />}
-            onClick={addRow}
-            disabled={!editing}
-            style={{ borderRadius: '25px' }}
-          >
-            Add New Field
-          </Button>
-        </div>
-      </Card>
-    </Col>
-    <Col flex="32px" style={{ verticalAlign: 'middle', margin: 'auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '4px' }}>
+            <Button
+              className="formButton"
+              type="primary"
+              icon={<PlusCircleOutlined />}
+              onClick={addRow}
+              disabled={!editing}
+              style={{ borderRadius: '25px' }}
+            >
+              Add New Field
+            </Button>
+          </div>
+        </Card>
+      </Col>
+      <Col flex="32px" style={{ verticalAlign: 'middle', margin: 'auto' }}>
         {editing ? (
           <>
             <Tooltip title="Save Change(s)">
-              <Button type="primary" style={{ margin: '4px' }} icon={<CheckOutlined />} onClick={() => confirmHandler(sortableIndex)} size="small" />
+              <Button
+                type="primary"
+                style={{ margin: '4px' }}
+                icon={<CheckOutlined />}
+                onClick={() => confirmHandler(sortableIndex)}
+                size="small"
+              />
             </Tooltip>
             <Tooltip placement="bottom" title="Cancel Change(s)">
-              <Button style={{ margin: '4px' }} icon={<CloseOutlined />} onClick={() => cancelHandler(sortableIndex)} size="small" />
+              <Button
+                style={{ margin: '4px' }}
+                icon={<CloseOutlined />}
+                onClick={() => cancelHandler(sortableIndex)}
+                size="small"
+              />
             </Tooltip>
           </>
         ) : (
           <>
-            <Button style={{ margin: '4px' }} icon={<EditOutlined/>} onClick={() => editHandler(sortableIndex)} size="small" />
-            <Button style={{ margin: '4px' }} icon={<DeleteOutlined />} onClick={() => deleteHandler(sortableIndex)} size="small" />
+            <Button
+              style={{ margin: '4px' }}
+              icon={<EditOutlined />}
+              onClick={() => editHandler(sortableIndex)}
+              size="small"
+            />
+            <Button
+              style={{ margin: '4px' }}
+              icon={<DeleteOutlined />}
+              onClick={() => deleteHandler(sortableIndex)}
+              size="small"
+            />
           </>
         )}
-    </Col>
+      </Col>
     </>
   );
 };

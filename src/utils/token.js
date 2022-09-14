@@ -1,9 +1,14 @@
-
 export default {
-    get() {
-      return window.sessionStorage.getItem('TOKEN');
-    },
-    save(token) {
-      window.sessionStorage.setItem('TOKEN', token);
-    },
-}
+  get() {
+    return window.localStorage.getItem('TOKEN');
+  },
+  save(token) {
+    window.localStorage.setItem('TOKEN', token);
+  },
+  getHeader() {
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': window.localStorage.getItem('TOKEN')
+    }
+  }
+};

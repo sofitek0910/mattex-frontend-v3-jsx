@@ -86,7 +86,6 @@ const TitleSection = ({
         prefillable
         textField
         builderMode={false}
-        mandatory
       />
     );
   };
@@ -96,7 +95,7 @@ const TitleSection = ({
   return (
     <>
     <Col flex="auto" style={{ maxWidth: '80%' }}>
-      <Card title="Title" style={{ margin: '8px' }}>
+      <Card className='sectionCard' title="Title" style={{ margin: '8px' }}>
         <FormRow
           title="Title"
           data={title}

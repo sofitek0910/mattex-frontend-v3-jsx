@@ -1,6 +1,6 @@
-import { CloseCircleOutlined, EditOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Button, Col, Input, Row } from 'antd';
-import { useState, useCallback } from 'react';
+import { useRef, useState, useCallback } from 'react';
 
 import TitleEditPopup from './TitleEditPopup';
 
@@ -8,6 +8,7 @@ const InputComponent = ({
   editing,
   label,
   placeholder,
+  disabled = false,
   prefilledValue,
   canEditLabel,
   canRemove,
@@ -19,7 +20,7 @@ const InputComponent = ({
 }) => {
   const [_prefilledValue, setPrefilledValue] = useState(prefilledValue);
   const [titleEditPopupShow, setTitleEditPopupShow] = useState(false);
-
+  const inputRef = useRef(null);
 
   const titleEditClickHandler = () => {
     //trigger titleEditPopupShow to show popup
@@ -27,7 +28,7 @@ const InputComponent = ({
   };
 
   const titleEditCallback = useCallback((index, newTitle) => {
-    labelEditHandler(index, newTitle)
+    labelEditHandler(index, newTitle);
   });
 
   const convertToAscii = (index, uppercase = false) => {
@@ -36,91 +37,96 @@ const InputComponent = ({
     } else {
       return String.fromCharCode('a'.charCodeAt(0) + index);
     }
-  }
+  };
 
   return (
     <>
-    <Row
-      style={{
-        backgroundColor: '#EAF4FF',
-        padding: '2px',
-        borderRadius: '4px',
-        border: '1px solid #EAF4FF',
-        color: '#0256B4',
-      }}
-    >
-      <Col flex={editing && canEditLabel ? '230px' : '250px'}>
-        <div style={{ padding: '4px 11px' }}>
-          {/* { (editing)?(
+      <Row
+        style={{
+          backgroundColor: '#EAF4FF',
+          padding: '2px',
+          borderRadius: '4px',
+          border: '1px solid #EAF4FF',
+          color: '#0256B4',
+        }}
+      >
+        <Col flex={editing && canEditLabel ? '230px' : '250px'}>
+          <div style={{ padding: '4px 11px' }}>
+            {/* { (editing)?(
             <Input value={label} />
           ):(
             <div style={{padding: '4px 11px'}}>{label}</div>
           ) } */}
-          {
-            listingStyle == 'alphabet'? (
+            {listingStyle == 'alphabet' ? (
               <span style={{ padding: '0 0 4px 0' }}>{`(${convertToAscii(index)})`}</span>
-            ):(<></>)
-          }
-          {
-            listingStyle == 'number'? (
-              <span style={{ padding: '0 0 4px 0' }}>{`(${index+1})`}</span>
-            ):(<></>)
-          }
-          <span style={{ padding: '4px 4px' }}>{label}</span>
-        </div>
-        
-      </Col>
+            ) : (
+              <></>
+            )}
+            {listingStyle == 'number' ? (
+              <span style={{ padding: '0 0 4px 0' }}>{`(${index + 1})`}</span>
+            ) : (
+              <></>
+            )}
+            <span style={{ padding: '4px 4px' }}>{label}</span>
+          </div>
+        </Col>
 
-      {editing && canEditLabel ? (
-        <Col flex="20px" style={{ padding: '0px' }}>
-          <Button type="text" style={{ padding: '0px' }}>
-            <EditOutlined
-             style={{ color: '#0256B4' }} 
-             onClick={editing ? titleEditClickHandler : () => {}}
+        {editing && canEditLabel ? (
+          <Col flex="20px" style={{ padding: '0px' }}>
+            <Button type="text" style={{ padding: '0px' }}>
+              <EditOutlined
+                style={{ color: '#0256B4' }}
+                onClick={editing ? titleEditClickHandler : () => {}}
+              />
+            </Button>
+          </Col>
+        ) : (
+          <></>
+        )}
+        <Col flex="auto">
+          {editing ? (
+            <Input
+              className='dndInput'  
+              //.dndInput:focus in style.css
+              //  box-shadow cover whole page except the focusing inputbox in order to hint user to click somewhere else before dragging the handle
+              ref={inputRef}
+              disabled={disabled}
+              placeholder={placeholder}
+              defaultValue={_prefilledValue}
+              onBlur={(e) => {
+                console.log('onBlur:', e.target.value);
+                changeHandler(index, label, e.target.value);
+              }}
             />
-          </Button>
+          ) : (
+            <Input placeholder={placeholder} defaultValue={_prefilledValue} disabled />
+          )}
         </Col>
-      ) : (
-        <></>
-      )}
-      <Col flex="auto">
-      {editing ? (
-        <Input
-          placeholder={placeholder}
-          defaultValue={_prefilledValue}
-          onBlur={(e) => {
-            console.log('onBlur:', e.target.value);
-            changeHandler(index, label, e.target.value);
-          }}
-        />
-      ):(
-        <Input
-          placeholder={placeholder}
-          defaultValue={_prefilledValue}
-          disabled
-        />
-      )}
-        
-      </Col>
-      {editing && canRemove ? (
-        <Col flex="20px" style={{ padding: '0px 4px' }}>
-          <Button type="text" style={{ padding: '0px' }} onClick={() => {removeHandler(index)}}>
-            <CloseCircleOutlined style={{ color: '#0256B4' }} />
-          </Button>
-        </Col>
-      ) : (
-        <></>
-      )}
-    </Row>
+        {editing && canRemove ? (
+          <Col flex="20px" style={{ padding: '0px 4px' }}>
+            <Button
+              type="text"
+              style={{ padding: '0px' }}
+              onClick={() => {
+                removeHandler(index);
+              }}
+            >
+              <DeleteOutlined style={{ color: '#0256B4' }} />
+            </Button>
+          </Col>
+        ) : (
+          <></>
+        )}
+      </Row>
 
-    {/******modal for editing title******* */}
-    <TitleEditPopup
-      titleEditPopupShow={titleEditPopupShow}
-      setTitleEditPopupShow={setTitleEditPopupShow}
-      title={label}
-      setTitle={titleEditCallback}
-      index={index}
-    />
+      {/******modal for editing title******* */}
+      <TitleEditPopup
+        titleEditPopupShow={titleEditPopupShow}
+        setTitleEditPopupShow={setTitleEditPopupShow}
+        title={label}
+        setTitle={titleEditCallback}
+        index={index}
+      />
     </>
   );
 };

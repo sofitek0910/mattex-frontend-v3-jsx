@@ -1,0 +1,58 @@
+.top-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  width: 100%;
+  color: rgba(70, 70, 70, 1);
+  font-size: 14px;
+  .badge {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    padding: 6px;
+    font-size: 0.5rem;
+    border-radius: 2px;
+    div:first-child {
+      color: black;
+    }
+    div:last-child {
+      color: rgba(103, 101, 101, 1);
+    }
+  }
+
+  .badge.blue {
+    background-color: rgba(239, 247, 254, 1);
+  }
+  .badge.purple {
+    background: rgba(243, 237, 255, 1);
+  }
+  .top-row-right {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+    div {
+      white-space: nowrap;
+    }
+  }
+}
+
+.inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  column-gap: 18px;
+  row-gap: 36px;
+}
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  .label {
+    display: flex;
+    gap: 0.25rem;
+    font-weight: 500;
+    font-size: 14px;
+    span {
+      color: rgba(228, 17, 17, 1);
+    }
+  }
+}

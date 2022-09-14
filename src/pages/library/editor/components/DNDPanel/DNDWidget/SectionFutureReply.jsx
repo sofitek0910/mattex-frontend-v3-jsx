@@ -71,6 +71,7 @@ const FutureReplySection = ({
     <>
     <Col flex="auto" style={{ maxWidth: '80%' }}>
       <Card
+        className='sectionCard'
         title={
           <Meta
             title="Future Reply"

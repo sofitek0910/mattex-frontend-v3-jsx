@@ -1,6 +1,5 @@
-import Footer from '@/components/Footer';
-import { login } from '@/services/ant-design-pro/api';
-import { getFakeCaptcha } from '@/services/ant-design-pro/login';
+import { useState } from 'react';
+
 import {
   AlipayCircleOutlined,
   LockOutlined,
@@ -11,10 +10,15 @@ import {
 } from '@ant-design/icons';
 import { LoginForm, ProFormCaptcha, ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
 import { Alert, message, Tabs } from 'antd';
-import { useState } from 'react';
 import { FormattedMessage, history, SelectLang, useIntl, useModel } from 'umi';
-import styles from './index.less';
+
+import Footer from '@/components/Footer';
+
 import token from '@/utils/token';
+import { login, getToken } from '@/services/ant-design-pro/api';
+import { getFakeCaptcha } from '@/services/ant-design-pro/login';
+
+import styles from './index.less';
 
 const LoginMessage = ({ content }) => (
   <Alert
@@ -42,29 +46,55 @@ const Login = () => {
   };
 
   const handleSubmit = async (values) => {
+
     try {
       // 登录
-      const msg = await login({ ...values, type });
-
-      if (msg.status === 'ok') {
-        const defaultLoginSuccessMessage = intl.formatMessage({
-          id: 'pages.login.success',
-          defaultMessage: 'login successfully',
-        });
-        message.success(defaultLoginSuccessMessage);
-        await fetchUserInfo();
-        /** 此方法会跳转到 redirect 参数所在的位置 */
-
-        if (!history) return;
-        const { query } = history.location;
-        const { redirect } = query;
-        history.push(redirect || '/');
-        return;
+      let postBody = {};
+      if (type === 'account') {
+        postBody = {
+          username: values.username,
+          password: values.password,
+        };
       }
 
-      console.log(msg); // 如果失败去设置用户错误信息
+      getToken(postBody).then(async (res) => {
+        console.log(res)
+        const msg = await login(postBody);
 
-      setUserLoginState(msg);
+        setUserLoginState(msg);
+        if (msg.data) {
+          const user = {
+            name: msg.data.name,
+            avatar: msg.data.avatar,
+            email: msg.data.email,
+            uid: msg.data.uid,
+          };
+          window.localStorage.setItem('user', JSON.stringify(user));
+          window.localStorage.setItem('expires_in', msg.data.expires_in)
+
+          setInitialState((s) => ({ ...s, currentUser: user }));
+
+          token.save(`Bearer ${res.access}`)
+
+          const defaultLoginSuccessMessage = intl.formatMessage({
+            id: 'pages.login.success',
+            defaultMessage: 'login successfully',
+          });
+          message.success(defaultLoginSuccessMessage);
+          await fetchUserInfo();
+          /** 此方法会跳转到 redirect 参数所在的位置 */
+
+          if (!history) return;
+          const { query } = history.location;
+          const { redirect } = query;
+          history.push(redirect || '/');
+          return;
+        }
+
+        console.log(msg); // 如果失败去设置用户错误信息
+
+        setUserLoginState(msg);
+      })
     } catch (error) {
       const defaultLoginFailureMessage = intl.formatMessage({
         id: 'pages.login.failure',
@@ -83,7 +113,7 @@ const Login = () => {
       <div className={styles.content}>
         <LoginForm
           logo={<img alt="logo" src="/logo.svg" />}
-          title="Ant Design"
+          title="Ant Design."
           subTitle={intl.formatMessage({
             id: 'pages.layouts.userLayout.title',
           })}
@@ -105,7 +135,6 @@ const Login = () => {
           }}
           submitter={{
             searchConfig: {
-              //resetText: 'reset',
               submitText: 'Login',
             },
           }}
@@ -131,7 +160,7 @@ const Login = () => {
             <LoginMessage
               content={intl.formatMessage({
                 id: 'pages.login.accountLogin.errorMessage',
-                defaultMessage: 'incorrect username or password(admin/ant.design)',
+                defaultMessage: 'incorrect email or password(admin/ant.design)',
               })}
             />
           )}
